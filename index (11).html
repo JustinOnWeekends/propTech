@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>PropInsight — Know Before You Buy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Grotesk:wght@300;400;500&family=DM+Mono:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#0A0A0F;
+  --ink2:#13131A;
+  --surface:#16161F;
+  --border:rgba(255,255,255,0.08);
+  --border2:rgba(255,255,255,0.14);
+  --text:#E8E8F0;
+  --muted:#8888A8;
+  --accent:#00FFB2;
+  --accent2:#7B5CFF;
+  --accent3:#FF4D6D;
+  --warn:#FFB830;
+  --font-head:'Syne',sans-serif;
+  --font-body:'Space Grotesk',sans-serif;
+  --font-mono:'DM Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{background:var(--ink);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.6;overflow-x:hidden}
+
+/* ── NOISE OVERLAY ── */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;opacity:0.4}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid transparent;transition:all 0.4s}
+nav.scrolled{background:rgba(10,10,15,0.92);backdrop-filter:blur(20px);border-color:var(--border)}
+.logo{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--text);text-decoration:none;letter-spacing:-0.5px}
+.logo span{color:var(--accent)}
+.nav-links{display:flex;align-items:center;gap:40px}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color 0.2s;letter-spacing:0.02em}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{background:var(--accent);color:var(--ink);padding:10px 22px;border-radius:100px;font-size:14px;font-weight:700;text-decoration:none;font-family:var(--font-head);transition:all 0.2s;letter-spacing:0.02em}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 0 30px rgba(0,255,178,0.4)}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 40px 80px;position:relative;overflow:hidden}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,255,178,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,178,0.03) 1px,transparent 1px);background-size:60px 60px;animation:gridShift 20s linear infinite}
+@keyframes gridShift{to{background-position:60px 60px}}
+.hero-glow{position:absolute;top:20%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(ellipse,rgba(123,92,255,0.15) 0%,transparent 70%);pointer-events:none;animation:glowPulse 6s ease-in-out infinite}
+.hero-glow2{position:absolute;top:60%;left:20%;width:400px;height:400px;background:radial-gradient(ellipse,rgba(0,255,178,0.08) 0%,transparent 70%);pointer-events:none;animation:glowPulse 8s ease-in-out infinite 2s}
+@keyframes glowPulse{0%,100%{opacity:0.6;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}}
+.hero-eyebrow{font-family:var(--font-mono);font-size:12px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:28px;opacity:0;animation:fadeUp 0.8s ease 0.2s forwards;display:flex;align-items:center;gap:12px}
+.hero-eyebrow::before,.hero-eyebrow::after{content:'';width:30px;height:1px;background:var(--accent);opacity:0.5}
+.hero h1{font-family:var(--font-head);font-size:clamp(52px,7vw,100px);font-weight:800;line-height:1.0;letter-spacing:-2px;margin-bottom:28px;opacity:0;animation:fadeUp 0.8s ease 0.4s forwards}
+.hero h1 .line1{display:block}
+.hero h1 .accent{color:var(--accent);position:relative;display:inline-block}
+.hero h1 .accent::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:3px;background:var(--accent);transform:scaleX(0);transform-origin:left;animation:lineGrow 0.8s ease 1.2s forwards}
+@keyframes lineGrow{to{transform:scaleX(1)}}
+.hero h1 .dim{color:var(--muted)}
+.hero-sub{font-size:18px;color:var(--muted);max-width:520px;line-height:1.7;margin-bottom:50px;opacity:0;animation:fadeUp 0.8s ease 0.6s forwards;font-weight:300}
+.hero-sub strong{color:var(--text);font-weight:500}
+.hero-actions{display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:center;opacity:0;animation:fadeUp 0.8s ease 0.8s forwards}
+.btn-primary{background:var(--accent);color:var(--ink);padding:16px 36px;border-radius:100px;font-size:16px;font-weight:700;text-decoration:none;font-family:var(--font-head);transition:all 0.3s;display:inline-flex;align-items:center;gap:10px;letter-spacing:0.01em}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 40px rgba(0,255,178,0.5)}
+.btn-primary svg{transition:transform 0.2s}
+.btn-primary:hover svg{transform:translateX(4px)}
+.btn-secondary{color:var(--text);padding:16px 36px;border:1px solid var(--border2);border-radius:100px;font-size:16px;font-weight:500;text-decoration:none;transition:all 0.3s}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+.hero-stats{margin-top:80px;display:flex;gap:60px;justify-content:center;opacity:0;animation:fadeUp 0.8s ease 1.0s forwards;border-top:1px solid var(--border);padding-top:40px;width:100%;max-width:700px}
+.stat-item{text-align:center}
+.stat-num{font-family:var(--font-head);font-size:36px;font-weight:800;color:var(--accent);letter-spacing:-1px;display:block}
+.stat-label{font-size:12px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:4px}
+
+/* ── SCROLL INDICATOR ── */
+.scroll-cue{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:fadeUp 1s ease 1.5s forwards}
+.scroll-cue span{font-size:11px;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;font-family:var(--font-mono)}
+.scroll-line{width:1px;height:50px;background:linear-gradient(var(--accent),transparent);animation:scrollPulse 2s ease-in-out infinite}
+@keyframes scrollPulse{0%,100%{opacity:0.3;transform:scaleY(1)}50%{opacity:1;transform:scaleY(0.6)}}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SECTION SHARED ── */
+section{padding:120px 60px}
+.section-label{font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.section-label::before{content:'';width:24px;height:1px;background:var(--accent)}
+.section-title{font-family:var(--font-head);font-size:clamp(36px,4vw,56px);font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:20px}
+.section-sub{font-size:17px;color:var(--muted);max-width:500px;line-height:1.7;font-weight:300}
+
+/* ── PROBLEM SECTION ── */
+.problem{background:var(--ink2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.problem-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.problem-portals{display:flex;flex-direction:column;gap:12px}
+.portal-row{display:flex;gap:12px;align-items:center;opacity:0;transform:translateX(-20px);transition:all 0.6s}
+.portal-row.visible{opacity:1;transform:translateX(0)}
+.portal-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px;flex:1;position:relative;overflow:hidden}
+.portal-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,77,109,0.05),transparent);opacity:0;transition:opacity 0.3s}
+.portal-card:hover::before{opacity:1}
+.portal-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.portal-name{font-size:13px;font-weight:500;color:var(--text)}
+.portal-url{font-family:var(--font-mono);font-size:10px;color:var(--muted);margin-top:2px}
+.portal-hours{margin-left:auto;font-family:var(--font-mono);font-size:11px;color:var(--accent3);background:rgba(255,77,109,0.1);padding:3px 8px;border-radius:20px;border:1px solid rgba(255,77,109,0.2)}
+.problem-arrow{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;flex-shrink:0}
+.problem-arrow span{font-size:20px;color:var(--muted);animation:bounce 2s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+.vs-pill{background:rgba(255,77,109,0.15);border:1px solid rgba(255,77,109,0.3);color:var(--accent3);font-size:11px;font-weight:700;padding:6px 14px;border-radius:100px;font-family:var(--font-mono);letter-spacing:0.05em;white-space:nowrap}
+.solution-card{background:linear-gradient(135deg,rgba(0,255,178,0.08),rgba(123,92,255,0.08));border:1px solid rgba(0,255,178,0.2);border-radius:16px;padding:32px;position:relative;overflow:hidden}
+.solution-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top left,rgba(0,255,178,0.05),transparent 60%)}
+.solution-title{font-family:var(--font-head);font-size:24px;font-weight:800;color:var(--accent);margin-bottom:8px}
+.solution-sub{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:24px}
+.solution-items{display:flex;flex-direction:column;gap:10px}
+.sol-item{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--text)}
+.sol-check{width:20px;height:20px;border-radius:50%;background:rgba(0,255,178,0.15);border:1px solid var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;color:var(--accent)}
+.total-time{margin-top:24px;padding-top:20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.time-label{font-size:12px;color:var(--muted)}
+.time-val{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--accent)}
+
+/* ── DEMO SECTION ── */
+.demo-section{max-width:1200px;margin:0 auto}
+.demo-wrapper{background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;position:relative}
+.demo-header{background:var(--ink2);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:14px}
+.demo-dots{display:flex;gap:7px}
+.demo-dot{width:12px;height:12px;border-radius:50%}
+.demo-dot.r{background:#FF4D4D}
+.demo-dot.y{background:#FFB830}
+.demo-dot.g{background:#00FFB2}
+.demo-url{flex:1;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-family:var(--font-mono);font-size:12px;color:var(--muted);text-align:center}
+.demo-body{display:grid;grid-template-columns:340px 1fr;min-height:560px}
+.demo-sidebar{border-right:1px solid var(--border);padding:28px;display:flex;flex-direction:column;gap:20px}
+.demo-eircode-label{font-size:11px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;font-family:var(--font-mono)}
+.demo-eircode-input{background:rgba(0,255,178,0.05);border:1px solid rgba(0,255,178,0.3);border-radius:10px;padding:12px 16px;font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--accent);letter-spacing:0.1em;margin-top:8px;cursor:pointer;transition:all 0.3s;position:relative}
+.demo-eircode-input:hover{border-color:var(--accent);box-shadow:0 0 20px rgba(0,255,178,0.2)}
+.cursor-blink{display:inline-block;width:2px;height:22px;background:var(--accent);margin-left:4px;animation:blink 1s step-end infinite;vertical-align:middle}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.demo-analyze-btn{background:var(--accent);color:var(--ink);border:none;border-radius:10px;padding:14px;font-family:var(--font-head);font-size:15px;font-weight:800;cursor:pointer;width:100%;transition:all 0.3s;position:relative;overflow:hidden}
+.demo-analyze-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent,rgba(255,255,255,0.2),transparent);transform:translateX(-100%);transition:transform 0.5s}
+.demo-analyze-btn:hover::before{transform:translateX(100%)}
+.demo-analyze-btn:hover{box-shadow:0 0 30px rgba(0,255,178,0.5);transform:translateY(-1px)}
+.demo-checks{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.demo-check-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);padding:10px 12px;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid var(--border);transition:all 0.3s}
+.demo-check-item.active{border-color:rgba(0,255,178,0.3);color:var(--text);background:rgba(0,255,178,0.04)}
+.demo-check-item.done{border-color:rgba(0,255,178,0.2);color:var(--muted)}
+.check-icon{width:18px;height:18px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;transition:all 0.3s}
+.demo-check-item.active .check-icon{border-color:var(--accent);background:rgba(0,255,178,0.15);color:var(--accent);animation:spin 1s linear infinite}
+.demo-check-item.done .check-icon{border-color:var(--accent);background:rgba(0,255,178,0.15);color:var(--accent)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.demo-map-area{position:relative;overflow:hidden;background:#0D1117}
+.demo-map-bg{width:100%;height:100%;object-fit:cover;opacity:0.6}
+.cork-map-svg{width:100%;height:100%}
+.demo-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,255,178,0.03),rgba(123,92,255,0.05))}
+
+/* Report cards overlay on map */
+.map-pin-container{position:absolute;inset:0;pointer-events:none}
+.risk-card{position:absolute;background:rgba(10,10,15,0.95);backdrop-filter:blur(10px);border-radius:12px;padding:14px 18px;border:1px solid var(--border2);min-width:160px;transform:scale(0);transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);pointer-events:auto}
+.risk-card.show{transform:scale(1)}
+.risk-card-title{font-size:10px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;font-family:var(--font-mono);margin-bottom:6px}
+.risk-card-val{font-family:var(--font-head);font-size:20px;font-weight:800;line-height:1}
+.risk-card-sub{font-size:11px;color:var(--muted);margin-top:4px}
+.risk-card.green .risk-card-val{color:var(--accent)}
+.risk-card.amber .risk-card-val{color:var(--warn)}
+.risk-card.red .risk-card-val{color:var(--accent3)}
+.risk-card.purple .risk-card-val{color:var(--accent2)}
+.card-pin{position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:6px solid rgba(10,10,15,0.95)}
+
+/* ── FEATURES SECTION ── */
+.features-section{max-width:1200px;margin:0 auto}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:20px;overflow:hidden;margin-top:60px}
+.feature-card{background:var(--ink);padding:40px 32px;transition:background 0.3s;cursor:pointer;position:relative;overflow:hidden}
+.feature-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s}
+.feature-card:hover{background:var(--ink2)}
+.feature-card:hover::before{opacity:1}
+.f1::before{background:radial-gradient(ellipse at top left,rgba(0,255,178,0.08),transparent 60%)}
+.f2::before{background:radial-gradient(ellipse at top left,rgba(123,92,255,0.08),transparent 60%)}
+.f3::before{background:radial-gradient(ellipse at top left,rgba(255,184,48,0.08),transparent 60%)}
+.f4::before{background:radial-gradient(ellipse at top left,rgba(255,77,109,0.08),transparent 60%)}
+.f5::before{background:radial-gradient(ellipse at top left,rgba(0,255,178,0.08),transparent 60%)}
+.f6::before{background:radial-gradient(ellipse at top left,rgba(123,92,255,0.08),transparent 60%)}
+.feature-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:20px;position:relative;z-index:1}
+.fi-green{background:rgba(0,255,178,0.1);border:1px solid rgba(0,255,178,0.2)}
+.fi-purple{background:rgba(123,92,255,0.1);border:1px solid rgba(123,92,255,0.2)}
+.fi-amber{background:rgba(255,184,48,0.1);border:1px solid rgba(255,184,48,0.2)}
+.fi-red{background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.2)}
+.feature-title{font-family:var(--font-head);font-size:20px;font-weight:800;margin-bottom:10px;position:relative;z-index:1}
+.feature-desc{font-size:14px;color:var(--muted);line-height:1.6;position:relative;z-index:1}
+.feature-badge{display:inline-block;margin-top:16px;font-size:11px;font-family:var(--font-mono);padding:4px 10px;border-radius:20px;position:relative;z-index:1}
+.badge-green{background:rgba(0,255,178,0.1);color:var(--accent);border:1px solid rgba(0,255,178,0.2)}
+.badge-purple{background:rgba(123,92,255,0.1);color:var(--accent2);border:1px solid rgba(123,92,255,0.2)}
+.badge-amber{background:rgba(255,184,48,0.1);color:var(--warn);border:1px solid rgba(255,184,48,0.2)}
+.badge-red{background:rgba(255,77,109,0.1);color:var(--accent3);border:1px solid rgba(255,77,109,0.2)}
+
+/* ── MAP PREVIEW SECTION ── */
+.map-section{background:var(--ink2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:0;overflow:hidden;position:relative}
+.map-section-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:400px 1fr;min-height:600px}
+.map-info{padding:80px 60px;display:flex;flex-direction:column;justify-content:center;gap:24px;border-right:1px solid var(--border)}
+.map-feature-list{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+.map-feature-item{display:flex;align-items:center;gap:14px;font-size:14px;color:var(--muted)}
+.map-feature-item .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.map-container{position:relative;overflow:hidden}
+.cork-svg-wrap{width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:40px}
+
+/* ── PRICING ── */
+.pricing-section{max-width:1100px;margin:0 auto}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:60px}
+.pricing-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px 32px;position:relative;overflow:hidden;transition:transform 0.3s}
+.pricing-card:hover{transform:translateY(-4px)}
+.pricing-card.featured{border-color:var(--accent);background:linear-gradient(135deg,rgba(0,255,178,0.06),rgba(123,92,255,0.06))}
+.pricing-card.featured::before{content:'Most Popular';position:absolute;top:0;right:24px;background:var(--accent);color:var(--ink);font-size:11px;font-weight:700;padding:4px 12px;border-radius:0 0 8px 8px;font-family:var(--font-head)}
+.plan-name{font-size:12px;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;font-family:var(--font-mono);margin-bottom:16px}
+.plan-price{font-family:var(--font-head);font-size:52px;font-weight:800;letter-spacing:-2px;line-height:1;margin-bottom:4px}
+.plan-price span{font-size:20px;font-weight:400;color:var(--muted);letter-spacing:0}
+.plan-cycle{font-size:13px;color:var(--muted);margin-bottom:28px}
+.plan-divider{height:1px;background:var(--border);margin-bottom:24px}
+.plan-features{display:flex;flex-direction:column;gap:12px;margin-bottom:32px}
+.plan-feature{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)}
+.plan-feature.active{color:var(--text)}
+.pf-check{width:16px;height:16px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px}
+.pf-yes{background:rgba(0,255,178,0.15);color:var(--accent);border:1px solid rgba(0,255,178,0.3)}
+.pf-no{background:rgba(255,255,255,0.05);color:var(--muted);border:1px solid var(--border)}
+.plan-btn{display:block;text-align:center;padding:14px;border-radius:12px;font-family:var(--font-head);font-size:15px;font-weight:800;text-decoration:none;transition:all 0.3s;letter-spacing:0.02em}
+.plan-btn-outline{border:1px solid var(--border2);color:var(--text)}
+.plan-btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.plan-btn-solid{background:var(--accent);color:var(--ink)}
+.plan-btn-solid:hover{box-shadow:0 0 30px rgba(0,255,178,0.4);transform:translateY(-1px)}
+
+/* ── TESTIMONIALS ── */
+.social-section{max-width:1100px;margin:0 auto}
+.social-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:60px}
+.testimonial{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;transition:all 0.3s}
+.testimonial:hover{border-color:var(--border2);transform:translateY(-2px)}
+.t-quote{font-size:15px;color:var(--text);line-height:1.7;margin-bottom:20px;font-style:italic}
+.t-quote::before{content:'"';font-family:var(--font-head);font-size:40px;color:var(--accent);opacity:0.4;line-height:0;vertical-align:-15px;margin-right:4px}
+.t-author{display:flex;align-items:center;gap:12px}
+.t-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:14px;font-weight:800;flex-shrink:0}
+.t-name{font-size:14px;font-weight:500;color:var(--text)}
+.t-role{font-size:12px;color:var(--muted)}
+
+/* ── CTA SECTION ── */
+.cta-section{text-align:center;position:relative;overflow:hidden}
+.cta-bg{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(0,255,178,0.08) 0%,transparent 60%)}
+.cta-inner{position:relative;z-index:1;max-width:700px;margin:0 auto}
+.cta-big{font-family:var(--font-head);font-size:clamp(40px,5vw,72px);font-weight:800;letter-spacing:-2px;line-height:1.05;margin-bottom:24px}
+.cta-sub{font-size:18px;color:var(--muted);line-height:1.6;margin-bottom:48px;font-weight:300}
+.cta-note{margin-top:24px;font-size:13px;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:20px}
+.cta-note::before,.cta-note::after{content:'';flex:1;max-width:80px;height:1px;background:var(--border)}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--border);padding:40px 60px;display:flex;align-items:center;justify-content:space-between}
+.footer-logo{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--muted)}
+.footer-logo span{color:var(--accent)}
+.footer-links{display:flex;gap:32px}
+.footer-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color 0.2s}
+.footer-links a:hover{color:var(--text)}
+.footer-copy{font-size:13px;color:var(--muted);font-family:var(--font-mono)}
+
+/* ── REVEAL ANIMATIONS ── */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity 0.8s ease,transform 0.8s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:0.1s}
+.reveal-delay-2{transition-delay:0.2s}
+.reveal-delay-3{transition-delay:0.3s}
+
+/* ── FLOATING PARTICLES ── */
+.particles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.particle{position:absolute;width:2px;height:2px;border-radius:50%;background:var(--accent);opacity:0;animation:float var(--dur,8s) var(--delay,0s) ease-in-out infinite}
+@keyframes float{0%{opacity:0;transform:translateY(100%)}10%{opacity:0.6}90%{opacity:0.2}100%{opacity:0;transform:translateY(-20px)}}
+
+/* ── COUNTER ANIMATION ── */
+.counter-section{background:var(--ink2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:60px}
+.counter-row{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:40px;text-align:center}
+.c-num{font-family:var(--font-head);font-size:clamp(40px,4vw,56px);font-weight:800;letter-spacing:-2px;color:var(--accent)}
+.c-label{font-size:13px;color:var(--muted);margin-top:8px;letter-spacing:0.05em}
+
+/* ── MOBILE ── */
+@media(max-width:768px){
+  nav{padding:16px 24px}
+  .nav-links{display:none}
+  section{padding:80px 24px}
+  .problem-inner{grid-template-columns:1fr}
+  .features-grid{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:1fr}
+  .social-grid{grid-template-columns:1fr}
+  .demo-body{grid-template-columns:1fr}
+  .map-section-inner{grid-template-columns:1fr}
+  footer{flex-direction:column;gap:24px;text-align:center;padding:40px 24px}
+  .hero-stats{gap:30px;flex-wrap:wrap}
+  .counter-row{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ── LIVE PULSE DOTS ── */
+.live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:8px;animation:livePulse 2s ease-in-out infinite}
+@keyframes livePulse{0%,100%{box-shadow:0 0 0 0 rgba(0,255,178,0.6)}70%{box-shadow:0 0 0 8px rgba(0,255,178,0)}}
+
+/* ── RISK METER ── */
+.risk-meter{display:flex;gap:4px;margin-top:8px}
+.risk-bar{height:4px;border-radius:2px;flex:1;background:var(--border)}
+.risk-bar.fill-green{background:var(--accent)}
+.risk-bar.fill-amber{background:var(--warn)}
+.risk-bar.fill-red{background:var(--accent3)}
+
+/* ── SCROLLING TICKER ── */
+.ticker-wrap{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(0,255,178,0.03);padding:12px 0}
+.ticker{display:flex;gap:0;animation:ticker 30s linear infinite;white-space:nowrap}
+.ticker-item{padding:0 48px;font-family:var(--font-mono);font-size:12px;color:var(--muted);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.ticker-item .accent{color:var(--accent)}
+.ticker-sep{color:var(--border2)}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="index.html" class="logo">Prop<span>Insight</span></a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#demo">Demo</a>
+    <a href="#pricing">Pricing</a>
+    <a href="pages/agents.html">For Agents</a>
+    <a href="pages/about.html">About</a>
+  </div>
+  <a href="pages/report.html" class="nav-cta">Try Free Report</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="particles" id="particles"></div>
+
+  <div class="hero-eyebrow"><span class="live-dot"></span>Live — covering Cork, Ireland</div>
+  <h1>
+    <span class="line1 dim">Know Everything</span>
+    <span class="accent">Before You Buy</span>
+  </h1>
+  <p class="hero-sub">
+    One Eircode. <strong>60 seconds.</strong> Flood risk, planning applications, crime data, schools, infrastructure — all in a single report built for Irish homebuyers.
+  </p>
+  <div class="hero-actions">
+    <a href="pages/report.html" class="btn-primary">
+      Run a Free Report
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9h12M10 4l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a href="#demo" class="btn-secondary">See it in action</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <span class="stat-num" data-target="61321" id="s1">0</span>
+      <span class="stat-label">Cork transactions analysed</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" id="s2">8</span>
+      <span class="stat-label">Data sources integrated</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" id="s3">&lt;60s</span>
+      <span class="stat-label">Report generation time</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">€387K</span>
+      <span class="stat-label">Avg Irish home price 2025</span>
+    </div>
+  </div>
+  <div class="scroll-cue">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker" id="ticker">
+    <div class="ticker-item"><span class="accent">●</span> T12 XY34 — <span class="accent">Low flood risk</span> <span class="ticker-sep">·</span> 2 planning apps nearby <span class="ticker-sep">·</span> Rating A</div>
+    <div class="ticker-item"><span class="accent">●</span> P43 AB12 — <span class="accent">Flood zone 2</span> <span class="ticker-sep">·</span> School catchment: Douglas CBS</div>
+    <div class="ticker-item"><span class="accent">●</span> T23 CD56 — <span class="accent">Low crime index</span> <span class="ticker-sep">·</span> 5 future planning permits nearby</div>
+    <div class="ticker-item"><span class="accent">●</span> P85 EF78 — <span class="accent">High demand area</span> <span class="ticker-sep">·</span> +42% price growth since 2019</div>
+    <div class="ticker-item"><span class="accent">●</span> T34 GH90 — <span class="accent">Irish Water: no issues</span> <span class="ticker-sep">·</span> 3 schools within 1km</div>
+    <div class="ticker-item"><span class="accent">●</span> P12 IJ34 — <span class="accent">Low flood risk</span> <span class="ticker-sep">·</span> Major road plan 500m away</div>
+    <!-- Duplicate for loop -->
+    <div class="ticker-item"><span class="accent">●</span> T12 XY34 — <span class="accent">Low flood risk</span> <span class="ticker-sep">·</span> 2 planning apps nearby <span class="ticker-sep">·</span> Rating A</div>
+    <div class="ticker-item"><span class="accent">●</span> P43 AB12 — <span class="accent">Flood zone 2</span> <span class="ticker-sep">·</span> School catchment: Douglas CBS</div>
+    <div class="ticker-item"><span class="accent">●</span> T23 CD56 — <span class="accent">Low crime index</span> <span class="ticker-sep">·</span> 5 future planning permits nearby</div>
+    <div class="ticker-item"><span class="accent">●</span> P85 EF78 — <span class="accent">High demand area</span> <span class="ticker-sep">·</span> +42% price growth since 2019</div>
+    <div class="ticker-item"><span class="accent">●</span> T34 GH90 — <span class="accent">Irish Water: no issues</span> <span class="ticker-sep">·</span> 3 schools within 1km</div>
+    <div class="ticker-item"><span class="accent">●</span> P12 IJ34 — <span class="accent">Low flood risk</span> <span class="ticker-sep">·</span> Major road plan 500m away</div>
+  </div>
+</div>
+
+<!-- PROBLEM SECTION -->
+<section class="problem reveal" id="problem">
+  <div class="problem-inner">
+    <div>
+      <div class="section-label">The Problem</div>
+      <h2 class="section-title">You're buying blind</h2>
+      <p class="section-sub" style="margin-bottom:32px">To research one property in Ireland today, you need to check all of these — separately. Most buyers never bother.</p>
+      <div class="problem-portals">
+        <div class="portal-row" id="pr0">
+          <div class="portal-card">
+            <div class="portal-icon" style="background:rgba(0,140,255,0.1)">🌊</div>
+            <div><div class="portal-name">OPW Flood Maps</div><div class="portal-url">floodinfo.ie</div></div>
+            <div class="portal-hours">~45 min</div>
+          </div>
+        </div>
+        <div class="portal-row" id="pr1">
+          <div class="portal-card">
+            <div class="portal-icon" style="background:rgba(255,140,0,0.1)">🏗️</div>
+            <div><div class="portal-name">ePlanning Applications</div><div class="portal-url">eplanning.ie</div></div>
+            <div class="portal-hours">~60 min</div>
+          </div>
+        </div>
+        <div class="portal-row" id="pr2">
+          <div class="portal-card">
+            <div class="portal-icon" style="background:rgba(255,77,109,0.1)">🚔</div>
+            <div><div class="portal-name">Garda Crime Stats</div><div class="portal-url">garda.ie (PDF)</div></div>
+            <div class="portal-hours">~30 min</div>
+          </div>
+        </div>
+        <div class="portal-row" id="pr3">
+          <div class="portal-card">
+            <div class="portal-icon" style="background:rgba(0,200,100,0.1)">🏫</div>
+            <div><div class="portal-name">School Catchments</div><div class="portal-url">education.gov.ie</div></div>
+            <div class="portal-hours">~20 min</div>
+          </div>
+        </div>
+        <div class="portal-row" id="pr4">
+          <div class="portal-card">
+            <div class="portal-icon" style="background:rgba(123,92,255,0.1)">💧</div>
+            <div><div class="portal-name">Irish Water Infrastructure</div><div class="portal-url">water.ie</div></div>
+            <div class="portal-hours">~25 min</div>
+          </div>
+        </div>
+        <div class="portal-row" id="pr5">
+          <div class="portal-card">
+            <div class="portal-icon" style="background:rgba(255,184,48,0.1)">🏠</div>
+            <div><div class="portal-name">Property Price Register</div><div class="portal-url">propertypriceregister.ie</div></div>
+            <div class="portal-hours">~30 min</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:24px;display:flex;align-items:center;gap:16px">
+        <div style="font-family:var(--font-mono);font-size:13px;color:var(--muted)">Total time per property:</div>
+        <div style="font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--accent3)">3.5 hours</div>
+        <div style="font-size:13px;color:var(--muted)">if you even know where to look</div>
+      </div>
+    </div>
+    <div class="solution-card">
+      <div class="solution-title">PropInsight does it in 60 seconds</div>
+      <div class="solution-sub">Enter any Eircode. Get a professional property intelligence report covering every risk and opportunity — presented in plain English.</div>
+      <div class="solution-items">
+        <div class="sol-item"><div class="sol-check">✓</div>Flood risk score from OPW CFRAM data</div>
+        <div class="sol-item"><div class="sol-check">✓</div>Planning applications within 500m</div>
+        <div class="sol-item"><div class="sol-check">✓</div>Crime index by district (Garda data)</div>
+        <div class="sol-item"><div class="sol-check">✓</div>Schools in catchment + ratings</div>
+        <div class="sol-item"><div class="sol-check">✓</div>Irish Water infrastructure alerts</div>
+        <div class="sol-item"><div class="sol-check">✓</div>Price history from Property Price Register</div>
+        <div class="sol-item"><div class="sol-check">✓</div>Future development & road plans</div>
+        <div class="sol-item"><div class="sol-check">✓</div>Downloadable PDF report</div>
+      </div>
+      <div class="total-time">
+        <div><div class="time-label">Time to complete report</div><div style="font-size:12px;color:var(--muted);margin-top:4px">vs 3.5 hours manually</div></div>
+        <div class="time-val">58s</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COUNTERS -->
+<div class="counter-section">
+  <div class="counter-row">
+    <div class="reveal"><div class="c-num" data-count="55000">0</div><div class="c-label">Irish home sales per year</div></div>
+    <div class="reveal reveal-delay-1"><div class="c-num" data-count="387">€0K</div><div class="c-label">Avg purchase price 2025</div></div>
+    <div class="reveal reveal-delay-2"><div class="c-num">8+</div><div class="c-label">Government portals to check</div></div>
+    <div class="reveal reveal-delay-3"><div class="c-num" data-count="96">0%</div><div class="c-label">Buyers who skip data checks</div></div>
+  </div>
+</div>
+
+<!-- DEMO SECTION -->
+<section style="padding:120px 60px" id="demo">
+  <div class="demo-section reveal">
+    <div class="section-label">Live Demo</div>
+    <h2 class="section-title">See it work</h2>
+    <p class="section-sub" style="margin-bottom:48px">Enter any Cork Eircode and watch PropInsight pull real data across 8 sources in real-time.</p>
+    <div class="demo-wrapper">
+      <div class="demo-header">
+        <div class="demo-dots">
+          <div class="demo-dot r"></div>
+          <div class="demo-dot y"></div>
+          <div class="demo-dot g"></div>
+        </div>
+        <div class="demo-url">app.propinsight.ie/report</div>
+      </div>
+      <div class="demo-body">
+        <div class="demo-sidebar">
+          <div>
+            <div class="demo-eircode-label">Eircode</div>
+            <div class="demo-eircode-input" id="eircode-display">T12 XY34<span class="cursor-blink"></span></div>
+          </div>
+          <button class="demo-analyze-btn" onclick="runDemo()">▶ Analyse Property</button>
+          <div class="demo-checks" id="demo-checks">
+            <div class="demo-check-item" id="dc0"><div class="check-icon">○</div>OPW Flood Data</div>
+            <div class="demo-check-item" id="dc1"><div class="check-icon">○</div>Planning Applications</div>
+            <div class="demo-check-item" id="dc2"><div class="check-icon">○</div>Garda Crime Index</div>
+            <div class="demo-check-item" id="dc3"><div class="check-icon">○</div>Property Price Register</div>
+            <div class="demo-check-item" id="dc4"><div class="check-icon">○</div>School Catchments</div>
+            <div class="demo-check-item" id="dc5"><div class="check-icon">○</div>Irish Water Alerts</div>
+            <div class="demo-check-item" id="dc6"><div class="check-icon">○</div>Future Dev Plans</div>
+            <div class="demo-check-item" id="dc7"><div class="check-icon">○</div>Generating PDF Report</div>
+          </div>
+          <a href="pages/report.html" id="view-report-btn" style="display:none;text-align:center;padding:14px;border-radius:12px;font-family:var(--font-head);font-size:15px;font-weight:800;text-decoration:none;background:var(--accent);color:var(--ink);transition:all 0.3s">View Full Report →</a>
+        </div>
+        <div class="demo-map-area" id="demo-map">
+          <svg class="cork-map-svg" viewBox="0 0 700 560" xmlns="http://www.w3.org/2000/svg" id="cork-svg">
+            <!-- Cork county simplified shape -->
+            <defs>
+              <radialGradient id="mapGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#1a2a1a"/>
+                <stop offset="100%" stop-color="#0A0A0F"/>
+              </radialGradient>
+              <filter id="glow-map">
+                <feGaussianBlur stdDeviation="3" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            <!-- Background -->
+            <rect width="700" height="560" fill="url(#mapGrad)"/>
+            <!-- Grid lines -->
+            <g stroke="rgba(0,255,178,0.05)" stroke-width="1">
+              <line x1="0" y1="56" x2="700" y2="56"/><line x1="0" y1="112" x2="700" y2="112"/>
+              <line x1="0" y1="168" x2="700" y2="168"/><line x1="0" y1="224" x2="700" y2="224"/>
+              <line x1="0" y1="280" x2="700" y2="280"/><line x1="0" y1="336" x2="700" y2="336"/>
+              <line x1="0" y1="392" x2="700" y2="392"/><line x1="0" y1="448" x2="700" y2="448"/>
+              <line x1="0" y1="504" x2="700" y2="504"/>
+              <line x1="70" y1="0" x2="70" y2="560"/><line x1="140" y1="0" x2="140" y2="560"/>
+              <line x1="210" y1="0" x2="210" y2="560"/><line x1="280" y1="0" x2="280" y2="560"/>
+              <line x1="350" y1="0" x2="350" y2="560"/><line x1="420" y1="0" x2="420" y2="560"/>
+              <line x1="490" y1="0" x2="490" y2="560"/><line x1="560" y1="0" x2="560" y2="560"/>
+              <line x1="630" y1="0" x2="630" y2="560"/>
+            </g>
+            <!-- Cork county outline - simplified polygon -->
+            <path d="M80,120 L120,80 L180,60 L260,55 L340,70 L400,60 L460,80 L520,100 L580,130 L620,170 L640,220 L630,270 L600,310 L580,360 L560,400 L540,440 L500,470 L450,490 L400,500 L350,510 L290,500 L240,480 L190,460 L150,430 L110,390 L90,350 L70,300 L60,250 L65,200 L80,150 Z"
+              fill="rgba(0,255,178,0.04)" stroke="rgba(0,255,178,0.3)" stroke-width="1.5"/>
+            <!-- LEA zones -->
+            <path d="M260,55 L340,70 L350,140 L300,180 L240,170 L220,120 Z" fill="rgba(0,255,178,0.06)" stroke="rgba(0,255,178,0.15)" stroke-width="1" class="lea-zone" data-name="Cork City North"/>
+            <path d="M300,180 L350,140 L400,170 L420,230 L360,250 L310,230 Z" fill="rgba(123,92,255,0.06)" stroke="rgba(123,92,255,0.15)" stroke-width="1" class="lea-zone" data-name="Cork City South"/>
+            <path d="M220,120 L240,170 L300,180 L310,230 L260,270 L200,260 L160,220 L170,160 Z" fill="rgba(255,184,48,0.06)" stroke="rgba(255,184,48,0.15)" stroke-width="1" class="lea-zone" data-name="Ballincollig-Carrigaline"/>
+            <path d="M360,250 L420,230 L460,280 L440,330 L390,340 L350,310 Z" fill="rgba(0,255,178,0.05)" stroke="rgba(0,255,178,0.12)" stroke-width="1" class="lea-zone" data-name="East Cork"/>
+            <path d="M130,300 L200,260 L260,270 L280,340 L230,380 L170,370 L120,340 Z" fill="rgba(255,77,109,0.05)" stroke="rgba(255,77,109,0.12)" stroke-width="1" class="lea-zone" data-name="Bandon-Kinsale"/>
+            <path d="M160,420 L230,380 L280,340 L310,380 L290,430 L240,460 L190,450 Z" fill="rgba(0,140,255,0.05)" stroke="rgba(0,140,255,0.12)" stroke-width="1" class="lea-zone" data-name="Clonakilty"/>
+            <path d="M350,310 L390,340 L380,400 L330,420 L300,400 L310,350 Z" fill="rgba(123,92,255,0.05)" stroke="rgba(123,92,255,0.12)" stroke-width="1" class="lea-zone" data-name="Fermoy"/>
+            <!-- Property pin -->
+            <g id="property-pin" style="opacity:0;transition:opacity 0.5s">
+              <circle cx="310" cy="210" r="30" fill="rgba(0,255,178,0.1)" class="ping-ring"/>
+              <circle cx="310" cy="210" r="20" fill="rgba(0,255,178,0.15)" class="ping-ring2"/>
+              <circle cx="310" cy="210" r="8" fill="var(--accent)"/>
+              <text x="310" y="195" text-anchor="middle" fill="rgba(0,255,178,0.8)" font-size="11" font-family="DM Mono,monospace">T12 XY34</text>
+            </g>
+            <!-- Radius rings -->
+            <circle id="ring1" cx="310" cy="210" r="60" fill="none" stroke="rgba(0,255,178,0.15)" stroke-width="1" stroke-dasharray="4 4" style="opacity:0;transition:opacity 0.5s"/>
+            <circle id="ring2" cx="310" cy="210" r="100" fill="none" stroke="rgba(0,255,178,0.08)" stroke-width="1" stroke-dasharray="4 4" style="opacity:0;transition:opacity 0.5s"/>
+            <!-- Planning dots -->
+            <g id="plan-dots" style="opacity:0;transition:opacity 0.8s 0.5s">
+              <circle cx="280" cy="175" r="5" fill="var(--warn)"/><text x="290" y="179" fill="rgba(255,184,48,0.7)" font-size="9" font-family="DM Mono,monospace">Planning</text>
+              <circle cx="340" cy="240" r="5" fill="var(--warn)"/><text x="350" y="244" fill="rgba(255,184,48,0.7)" font-size="9" font-family="DM Mono,monospace">Planning</text>
+            </g>
+            <!-- Cork city label -->
+            <text x="310" y="300" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="13" font-family="Syne,sans-serif" font-weight="800">CORK CITY</text>
+            <!-- Compass -->
+            <g transform="translate(640,50)">
+              <circle r="20" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+              <text y="-8" text-anchor="middle" fill="rgba(0,255,178,0.8)" font-size="10" font-family="DM Mono,monospace">N</text>
+              <line x1="0" y1="-14" x2="0" y2="14" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+              <line x1="-14" y1="0" x2="14" y2="0" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+            </g>
+            <!-- Scale bar -->
+            <g transform="translate(40,520)">
+              <line x1="0" y1="0" x2="60" y2="0" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+              <line x1="0" y1="-4" x2="0" y2="4" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+              <line x1="60" y1="-4" x2="60" y2="4" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+              <text x="30" y="-8" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="9" font-family="DM Mono,monospace">10 km</text>
+            </g>
+          </svg>
+          <!-- Result cards that appear after analysis -->
+          <div class="map-pin-container">
+            <div class="risk-card green" id="rc-flood" style="top:18%;left:50%">
+              <div class="risk-card-title">Flood Risk</div>
+              <div class="risk-card-val">LOW</div>
+              <div class="risk-meter"><div class="risk-bar fill-green"></div><div class="risk-bar"></div><div class="risk-bar"></div></div>
+              <div class="risk-card-sub">OPW Zone A — Safe</div>
+              <div class="card-pin"></div>
+            </div>
+            <div class="risk-card amber" id="rc-plan" style="top:52%;left:58%">
+              <div class="risk-card-title">Planning Apps</div>
+              <div class="risk-card-val">2 Nearby</div>
+              <div class="risk-card-sub">Within 500m radius</div>
+              <div class="card-pin"></div>
+            </div>
+            <div class="risk-card green" id="rc-crime" style="top:30%;left:12%">
+              <div class="risk-card-title">Crime Index</div>
+              <div class="risk-card-val">67/100</div>
+              <div class="risk-meter"><div class="risk-bar fill-green"></div><div class="risk-bar fill-green"></div><div class="risk-bar"></div></div>
+              <div class="risk-card-sub">Below city average</div>
+              <div class="card-pin"></div>
+            </div>
+            <div class="risk-card purple" id="rc-price" style="top:68%;left:15%">
+              <div class="risk-card-title">Median Price</div>
+              <div class="risk-card-val">€342K</div>
+              <div class="risk-card-sub">+12% since 2022 · PPR data</div>
+              <div class="card-pin"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section style="padding:120px 60px;background:var(--ink2);border-top:1px solid var(--border)" id="features">
+  <div class="features-section reveal">
+    <div class="section-label">Features</div>
+    <h2 class="section-title">Every data source.<br>One report.</h2>
+    <p class="section-sub">Built on Ireland's public data infrastructure — the same data sources used by solicitors, surveyors and local authorities.</p>
+    <div class="features-grid">
+      <div class="feature-card f1">
+        <div class="feature-icon fi-green">🌊</div>
+        <div class="feature-title">Flood Risk Analysis</div>
+        <div class="feature-desc">OPW CFRAM data covering river, coastal and surface water flood zones. Know if your house is in Zone A, B or C before you sign anything.</div>
+        <div class="feature-badge badge-green">OPW · CFRAM · Real-time</div>
+      </div>
+      <div class="feature-card f2">
+        <div class="feature-icon fi-purple">🏗️</div>
+        <div class="feature-title">Planning Intelligence</div>
+        <div class="feature-desc">All planning applications within 500m — granted, refused, and pending. Know what's being built beside you before it breaks ground.</div>
+        <div class="feature-badge badge-purple">An Bord Pleanála · ePlanning</div>
+      </div>
+      <div class="feature-card f3">
+        <div class="feature-icon fi-amber">🚔</div>
+        <div class="feature-title">Crime & Safety Index</div>
+        <div class="feature-desc">Area crime rates from Garda statistics, indexed by district and benchmarked against national and county averages. Not just raw numbers — context.</div>
+        <div class="feature-badge badge-amber">An Garda Síochána data</div>
+      </div>
+      <div class="feature-card f4">
+        <div class="feature-icon fi-red">🏫</div>
+        <div class="feature-title">School Catchments</div>
+        <div class="feature-desc">Primary and secondary schools within catchment, including enrollment capacity, distance, and Dept. of Education ratings.</div>
+        <div class="feature-badge badge-green">Dept. of Education · OSI</div>
+      </div>
+      <div class="feature-card f5">
+        <div class="feature-icon fi-green">💧</div>
+        <div class="feature-title">Infrastructure & Water</div>
+        <div class="feature-desc">Irish Water infrastructure alerts, known supply issues, and future upgrade plans that may affect your property value or building potential.</div>
+        <div class="feature-badge badge-purple">Irish Water · data.gov.ie</div>
+      </div>
+      <div class="feature-card f6">
+        <div class="feature-icon fi-purple">📊</div>
+        <div class="feature-title">Price History & Trends</div>
+        <div class="feature-desc">Full price history from the Property Price Register for your street, area and LEA. Know what properties actually sold for — not asking price.</div>
+        <div class="feature-badge badge-amber">PPR · CSO · 16 years data</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAP SECTION -->
+<section class="map-section" id="map-preview">
+  <div class="map-section-inner">
+    <div class="map-info reveal">
+      <div class="section-label">Coverage Map</div>
+      <h2 class="section-title" style="font-size:clamp(28px,3vw,42px)">Starting with Cork. Ireland next.</h2>
+      <p style="font-size:15px;color:var(--muted);line-height:1.7;font-weight:300">Full coverage of Cork County's 15 Local Electoral Areas. Every Eircode from T12 to P85. Dublin, Galway, Limerick — coming Q3 2025.</p>
+      <div class="map-feature-list">
+        <div class="map-feature-item"><div class="dot" style="background:var(--accent)"></div>15 Cork LEAs fully covered</div>
+        <div class="map-feature-item"><div class="dot" style="background:var(--accent)"></div>61,321 historical transactions</div>
+        <div class="map-feature-item"><div class="dot" style="background:var(--accent)"></div>OPW flood zone mapping</div>
+        <div class="map-feature-item"><div class="dot" style="background:var(--warn)"></div>Dublin — Q3 2025</div>
+        <div class="map-feature-item"><div class="dot" style="background:var(--warn)"></div>Galway, Limerick — Q4 2025</div>
+        <div class="map-feature-item"><div class="dot" style="background:rgba(255,255,255,0.2)"></div>All 26 counties — 2026</div>
+      </div>
+    </div>
+    <div class="map-container">
+      <div class="cork-svg-wrap">
+        <svg viewBox="0 0 500 480" xmlns="http://www.w3.org/2000/svg" style="max-height:520px;width:100%">
+          <defs>
+            <radialGradient id="mg2" cx="50%" cy="50%" r="60%">
+              <stop offset="0%" stop-color="rgba(0,255,178,0.12)"/>
+              <stop offset="100%" stop-color="rgba(0,255,178,0)"/>
+            </radialGradient>
+          </defs>
+          <!-- Ireland outline simplified -->
+          <path d="M100,60 L150,40 L210,35 L270,45 L310,40 L360,55 L400,80 L420,120 L430,160 L420,200 L400,240 L390,280 L380,320 L360,360 L330,390 L290,410 L250,420 L210,415 L170,400 L140,375 L110,345 L90,310 L75,270 L70,230 L80,190 L85,150 L90,110 Z"
+            fill="rgba(0,255,178,0.04)" stroke="rgba(0,255,178,0.2)" stroke-width="1.5"/>
+          <!-- Cork highlighted region -->
+          <path d="M140,280 L180,260 L220,265 L260,280 L290,300 L300,340 L280,375 L250,400 L210,410 L175,395 L148,370 L130,340 L125,305 Z"
+            fill="rgba(0,255,178,0.15)" stroke="var(--accent)" stroke-width="2"/>
+          <!-- Cork city dot -->
+          <circle cx="215" cy="330" r="8" fill="var(--accent)" opacity="0.9"/>
+          <circle cx="215" cy="330" r="18" fill="var(--accent)" opacity="0.15" class="ping"/>
+          <text x="230" y="334" fill="rgba(0,255,178,0.9)" font-size="12" font-family="Syne,sans-serif" font-weight="800">Cork</text>
+          <!-- Dublin marker (coming soon) -->
+          <circle cx="310" cy="155" r="5" fill="var(--warn)" opacity="0.7"/>
+          <text x="320" y="159" fill="rgba(255,184,48,0.7)" font-size="10" font-family="DM Mono,monospace">Dublin Q3</text>
+          <!-- Galway marker -->
+          <circle cx="150" cy="170" r="5" fill="rgba(255,255,255,0.3)" opacity="0.7"/>
+          <text x="162" y="174" fill="rgba(255,255,255,0.3)" font-size="10" font-family="DM Mono,monospace">Galway Q4</text>
+          <!-- Legend -->
+          <rect x="10" y="420" width="14" height="14" rx="3" fill="rgba(0,255,178,0.3)" stroke="var(--accent)" stroke-width="1"/>
+          <text x="30" y="431" fill="rgba(0,255,178,0.8)" font-size="11" font-family="DM Mono,monospace">Active coverage</text>
+          <rect x="10" y="442" width="14" height="14" rx="3" fill="rgba(255,184,48,0.1)" stroke="var(--warn)" stroke-width="1"/>
+          <text x="30" y="453" fill="rgba(255,184,48,0.6)" font-size="11" font-family="DM Mono,monospace">Coming soon</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section style="padding:120px 60px" id="pricing">
+  <div class="pricing-section reveal">
+    <div class="section-label">Pricing</div>
+    <h2 class="section-title">Simple, transparent pricing</h2>
+    <p class="section-sub">Start free. Pay only when you find value. Built for buyers, agents and brokers.</p>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="plan-name">Pay Per Report</div>
+        <div class="plan-price">€14<span>.99</span></div>
+        <div class="plan-cycle">per property report</div>
+        <div class="plan-divider"></div>
+        <div class="plan-features">
+          <div class="plan-feature active"><div class="pf-check pf-yes">✓</div>Full property report</div>
+          <div class="plan-feature active"><div class="pf-check pf-yes">✓</div>All 8 data sources</div>
+          <div class="plan-feature active"><div class="pf-check pf-yes">✓</div>PDF download</div>
+          <div class="plan-feature active"><div class="pf-check pf-yes">✓</div>Valid for 30 days</div>
+          <div class="plan-feature"><div class="pf-check pf-no">—</div>Property comparison</div>
+          <div class="plan-feature"><div class="pf-check pf-no">—</div>Saved reports</div>
+        </div>
+        <a href="pages/report.html" class="plan-btn plan-btn-outline">Get a Report</a>
+      </div>
+      <div class="pricing-card featured">
+        <div class="plan-name">Buyer Pro</div>
+        <div class="plan-price">€29<span>/mo</span></div>
+        <div class="plan-cycle">billed monthly · cancel anytime</div>
+        <div class="plan-divider"></div>
+        <div class="plan-features">
+          <div class="plan-feature active"><div class="pf-check pf-yes">✓</div>Unlimited reports</div>
+          <div class="plan-feature active"><div class="pf-check pf-yes">✓</div>Side-by-side comparison</div>
+          <div class="plan-feature active"><div class="pf-check pf-yes">✓</div>Saved property history</div>
+          <div class="plan-feature active"><div class="pf-check pf-yes">✓</div>Price alerts & tracking</div>
+          <div class="plan-feature active"><div class="pf-check pf-yes">✓</div>PDF + shareable link</div>
+          <div class="plan-feature"><div class="pf-check pf-no">—</div>Agent dashboard</div>
+        </div>
+        <a href="pages/report.html" class="plan-btn plan-btn-solid">Start Free Trial</a>
+      </div>
+      <div class="pricing-card">
+        <div class="plan-name">Agent & Broker</div>
+        <div class="plan-price">€249<span>/mo</span></div>
+        <div class="plan-cycle">per office · unlimited agents</div>
+        <div class="plan-divider"></div>
+        <div class="plan-features">
+          <div class="plan-feature active"><div class="pf-check pf-yes">✓</div>Everything in Buyer Pro</div>
+          <div class="plan-feature active"><div class="pf-check pf-yes">✓</div>White-label reports</div>
+          <div class="plan-feature active"><div class="pf-check pf-yes">✓</div>Client sharing portal</div>
+          <div class="plan-feature active"><div class="pf-check pf-yes">✓</div>Portfolio dashboard</div>
+          <div class="plan-feature active"><div class="pf-check pf-yes">✓</div>CRM integration</div>
+          <div class="plan-feature active"><div class="pf-check pf-yes">✓</div>Priority support</div>
+        </div>
+        <a href="pages/agents.html" class="plan-btn plan-btn-outline">Book a Demo</a>
+      </div>
+    </div>
+    <p style="text-align:center;margin-top:32px;font-size:13px;color:var(--muted)">First report is always free. No credit card required to get started.</p>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section style="padding:120px 60px;background:var(--ink2);border-top:1px solid var(--border)">
+  <div class="social-section reveal">
+    <div class="section-label">Early Users</div>
+    <h2 class="section-title">What buyers say</h2>
+    <div class="social-grid">
+      <div class="testimonial">
+        <div class="t-quote">We nearly bought a house in Togher that was in OPW flood zone B. PropInsight flagged it immediately. Our solicitor hadn't even mentioned it.</div>
+        <div class="t-author">
+          <div class="t-avatar" style="background:rgba(0,255,178,0.15);color:var(--accent)">SM</div>
+          <div><div class="t-name">Siobhán M.</div><div class="t-role">First-time buyer · Cork City</div></div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <div class="t-quote">I'm an estate agent and I started including PropInsight reports with every viewing. Clients trust us more. It's a genuine differentiator.</div>
+        <div class="t-author">
+          <div class="t-avatar" style="background:rgba(123,92,255,0.15);color:var(--accent2)">DC</div>
+          <div><div class="t-name">Declan C.</div><div class="t-role">Senior Agent · REA Cork</div></div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <div class="t-quote">Used to spend an entire evening researching a property before viewing. PropInsight does it better in a minute. I've run reports on 14 properties so far.</div>
+        <div class="t-author">
+          <div class="t-avatar" style="background:rgba(255,184,48,0.15);color:var(--warn)">AK</div>
+          <div><div class="t-name">Arun K.</div><div class="t-role">House hunting · Douglas</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" style="padding:160px 60px">
+  <div class="cta-bg"></div>
+  <div class="cta-inner reveal">
+    <div class="cta-big">Don't buy blind.<br>Buy <span style="color:var(--accent)">informed.</span></div>
+    <p class="cta-sub">Your first report is free. 60 seconds. No card required. Start with any Cork Eircode.</p>
+    <a href="pages/report.html" class="btn-primary" style="font-size:18px;padding:20px 48px;margin:0 auto;display:inline-flex">
+      Run Your Free Report
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <div class="cta-note">No credit card · Free first report · Ireland-only data · GDPR compliant</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Prop<span>Insight</span></div>
+  <div class="footer-links">
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <a href="pages/agents.html">For Agents</a>
+    <a href="pages/report.html">Try Free</a>
+    <a href="pages/about.html">About</a>
+  </div>
+  <div class="footer-copy">© 2025 PropInsight · Cork, Ireland</div>
+</footer>
+
+<script>
+// ── NAV SCROLL ──
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>50)
+})
+
+// ── PARTICLES ──
+const pWrap=document.getElementById('particles')
+for(let i=0;i<25;i++){
+  const p=document.createElement('div')
+  p.className='particle'
+  p.style.cssText=`left:${Math.random()*100}%;--dur:${6+Math.random()*10}s;--delay:${Math.random()*8}s;width:${Math.random()>0.7?3:2}px;height:${Math.random()>0.7?3:2}px`
+  pWrap.appendChild(p)
+}
+
+// ── INTERSECTION OBSERVER FOR REVEALS ──
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}
+  })
+},{threshold:0.1})
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el))
+
+// ── PORTAL ROWS STAGGER ──
+const portalObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      document.querySelectorAll('.portal-row').forEach((r,i)=>{
+        setTimeout(()=>r.classList.add('visible'),i*120)
+      })
+      portalObs.unobserve(e.target)
+    }
+  })
+},{threshold:0.2})
+const problemSec=document.querySelector('.problem')
+if(problemSec)portalObs.observe(problemSec)
+
+// ── HERO COUNTER ANIMATION ──
+function animCount(el,target,prefix='',suffix=''){
+  let start=0,dur=2000,step=dur/60
+  const inc=target/60
+  const timer=setInterval(()=>{
+    start=Math.min(start+inc,target)
+    el.textContent=prefix+Math.floor(start).toLocaleString()+suffix
+    if(start>=target)clearInterval(timer)
+  },step)
+}
+setTimeout(()=>{
+  animCount(document.getElementById('s1'),61321,'','')
+},1200)
+
+// ── EIRCODE TYPEWRITER ──
+const eircodes=['T12 XY34','P43 AB12','T23 CD56','P85 EF78','T34 GH90']
+let ei=0
+function cycleEircode(){
+  const el=document.getElementById('eircode-display')
+  const next=eircodes[(++ei)%eircodes.length]
+  el.innerHTML='<span class="cursor-blink"></span>'
+  let ci=0
+  const t=setInterval(()=>{
+    el.innerHTML=next.substring(0,ci+1)+'<span class="cursor-blink"></span>'
+    if(++ci>=next.length)clearInterval(t)
+  },60)
+}
+setInterval(cycleEircode,3500)
+
+// ── DEMO ANIMATION ──
+let demoRunning=false
+function runDemo(){
+  if(demoRunning)return
+  demoRunning=true
+  const checks=document.querySelectorAll('.demo-check-item')
+  const icons=document.querySelectorAll('.demo-check-item .check-icon')
+  // Reset
+  checks.forEach(c=>{c.className='demo-check-item';c.querySelector('.check-icon').textContent='○'})
+  document.getElementById('view-report-btn').style.display='none'
+  document.getElementById('property-pin').style.opacity='0'
+  document.getElementById('ring1').style.opacity='0'
+  document.getElementById('ring2').style.opacity='0'
+  document.getElementById('plan-dots').style.opacity='0'
+  document.querySelectorAll('.risk-card').forEach(c=>c.classList.remove('show'))
+
+  // Show pin
+  setTimeout(()=>{
+    document.getElementById('property-pin').style.opacity='1'
+    document.getElementById('ring1').style.opacity='1'
+    setTimeout(()=>document.getElementById('ring2').style.opacity='1',300)
+  },200)
+
+  // Animate each check
+  checks.forEach((c,i)=>{
+    const dur=600+i*700
+    setTimeout(()=>{
+      checks.forEach(x=>x.classList.remove('active'))
+      c.classList.add('active')
+      c.querySelector('.check-icon').textContent='↻'
+    },dur)
+    setTimeout(()=>{
+      c.classList.remove('active')
+      c.classList.add('done')
+      c.querySelector('.check-icon').textContent='✓'
+      // Show planning dots after item 1
+      if(i===1)document.getElementById('plan-dots').style.opacity='1'
+      // Show risk cards progressively
+      const cards=['rc-flood','rc-crime','rc-plan','rc-price']
+      if(i<cards.length)document.getElementById(cards[i]).classList.add('show')
+    },dur+600)
+  })
+
+  // Show view report button
+  setTimeout(()=>{
+    document.getElementById('view-report-btn').style.display='block'
+    demoRunning=false
+  },checks.length*700+1200)
+}
+
+// ── PING ANIMATION (CSS) for map ──
+const style=document.createElement('style')
+style.textContent=`
+.ping{animation:pingPulse 2s ease-out infinite}
+@keyframes pingPulse{0%{r:18;opacity:0.4}100%{r:35;opacity:0}}
+.ping-ring{animation:pingPulse2 2s ease-out infinite}
+.ping-ring2{animation:pingPulse2 2s ease-out infinite 0.5s}
+@keyframes pingPulse2{0%{opacity:0.4;transform:scale(1)}100%{opacity:0;transform:scale(1.5)}}
+`
+document.head.appendChild(style)
+
+// ── LEA HOVER ──
+document.querySelectorAll('.lea-zone').forEach(z=>{
+  z.style.cursor='pointer'
+  z.addEventListener('mouseenter',function(){
+    this.style.fillOpacity='0.3'
+  })
+  z.addEventListener('mouseleave',function(){
+    this.style.fillOpacity=''
+  })
+})
+
+// ── SMOOTH SCROLL ──
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault()
+    const t=document.querySelector(a.getAttribute('href'))
+    if(t)t.scrollIntoView({behavior:'smooth'})
+  })
+})
+</script>
+</body>
+</html>

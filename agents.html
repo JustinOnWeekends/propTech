@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>PropInsight for Agents — Win More Business</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Grotesk:wght@300;400;500&family=DM+Mono:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+:root{--ink:#0A0A0F;--ink2:#13131A;--surface:#16161F;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);--text:#E8E8F0;--muted:#8888A8;--accent:#00FFB2;--accent2:#7B5CFF;--accent3:#FF4D6D;--warn:#FFB830;--font-head:'Syne',sans-serif;--font-body:'Space Grotesk',sans-serif;--font-mono:'DM Mono',monospace;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}body{background:var(--ink);color:var(--text);font-family:var(--font-body);overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;opacity:0.4}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,15,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.logo{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--text);text-decoration:none}.logo span{color:var(--accent)}
+.nav-links{display:flex;align-items:center;gap:40px}.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color 0.2s}.nav-links a:hover{color:var(--text)}
+.nav-cta{background:var(--accent);color:var(--ink);padding:10px 22px;border-radius:100px;font-size:14px;font-weight:700;text-decoration:none;font-family:var(--font-head);transition:all 0.2s}.nav-cta:hover{box-shadow:0 0 30px rgba(0,255,178,0.4)}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;padding:140px 60px 100px;position:relative;overflow:hidden;max-width:1300px;margin:0 auto;gap:80px}
+.hero-bg{position:fixed;inset:0;background-image:linear-gradient(rgba(0,255,178,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,178,0.02) 1px,transparent 1px);background-size:60px 60px;z-index:-1}
+.hero-left{flex:1;max-width:580px}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(0,255,178,0.08);border:1px solid rgba(0,255,178,0.2);border-radius:100px;padding:8px 16px;font-size:12px;font-family:var(--font-mono);color:var(--accent);letter-spacing:0.1em;margin-bottom:28px}
+.hero h1{font-family:var(--font-head);font-size:clamp(44px,5vw,72px);font-weight:800;line-height:1.05;letter-spacing:-2px;margin-bottom:24px}
+.hero h1 .accent{color:var(--accent)}
+.hero-sub{font-size:17px;color:var(--muted);line-height:1.7;margin-bottom:40px;font-weight:300;max-width:480px}
+.hero-actions{display:flex;gap:16px;flex-wrap:wrap}
+.btn-p{background:var(--accent);color:var(--ink);padding:14px 32px;border-radius:100px;font-size:15px;font-weight:700;text-decoration:none;font-family:var(--font-head);transition:all 0.3s}.btn-p:hover{box-shadow:0 0 30px rgba(0,255,178,0.4);transform:translateY(-2px)}
+.btn-s{color:var(--text);padding:14px 32px;border:1px solid var(--border2);border-radius:100px;font-size:15px;text-decoration:none;transition:all 0.3s}.btn-s:hover{border-color:var(--accent);color:var(--accent)}
+.hero-right{flex:0 0 460px}
+.agent-card{background:var(--surface);border:1px solid var(--border2);border-radius:20px;overflow:hidden}
+.ac-header{background:var(--ink2);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;gap:8px}
+.acd{width:12px;height:12px;border-radius:50%}.acd.r{background:#FF4D4D}.acd.y{background:#FFB830}.acd.g{background:#00FFB2}
+.ac-body{padding:20px}
+.agent-report-preview{background:rgba(0,255,178,0.03);border:1px solid rgba(0,255,178,0.1);border-radius:12px;padding:16px;margin-bottom:14px}
+.arp-eircode{font-family:var(--font-head);font-size:24px;font-weight:800;color:var(--accent);margin-bottom:4px}
+.arp-addr{font-size:12px;color:var(--muted);margin-bottom:14px;font-family:var(--font-mono)}
+.arp-scores{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.arp-score{background:var(--ink);border-radius:8px;padding:10px;text-align:center}
+.arps-label{font-size:9px;color:var(--muted);font-family:var(--font-mono);letter-spacing:0.05em;margin-bottom:4px}
+.arps-val{font-size:15px;font-weight:700;font-family:var(--font-head)}
+.arps-g{color:var(--accent)}.arps-a{color:var(--warn)}.arps-r{color:var(--accent3)}
+.agent-action-row{display:flex;gap:10px}
+.aa-btn{flex:1;padding:10px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;font-family:var(--font-body);text-align:center;text-decoration:none}
+.aa-outline{background:transparent;border:1px solid var(--border2);color:var(--text)}.aa-outline:hover{border-color:var(--accent);color:var(--accent)}
+.aa-solid{background:var(--accent);border:none;color:var(--ink);font-weight:700}.aa-solid:hover{box-shadow:0 0 20px rgba(0,255,178,0.4)}
+.client-tag{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-top:12px}
+.ct-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:var(--font-head)}
+.ct-text{font-size:12px;color:var(--muted)}.ct-text strong{color:var(--text)}
+.ct-badge{margin-left:auto;font-size:10px;font-family:var(--font-mono);color:var(--accent);background:rgba(0,255,178,0.1);padding:3px 8px;border-radius:20px}
+
+/* STATS STRIP */
+.stats-strip{background:var(--ink2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:48px 60px}
+.stats-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:40px;text-align:center}
+.stat-n{font-family:var(--font-head);font-size:48px;font-weight:800;color:var(--accent);letter-spacing:-2px}
+.stat-l{font-size:13px;color:var(--muted);margin-top:6px}
+
+/* HOW IT WORKS */
+.how-section{max-width:1100px;margin:0 auto;padding:120px 60px}
+.section-label{font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.section-label::before{content:'';width:24px;height:1px;background:var(--accent)}
+.section-title{font-family:var(--font-head);font-size:clamp(32px,4vw,52px);font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:16px}
+.section-sub{font-size:16px;color:var(--muted);max-width:500px;line-height:1.7;font-weight:300}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:60px}
+.step-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;position:relative;overflow:hidden;transition:all 0.3s}
+.step-card:hover{border-color:var(--border2);transform:translateY(-4px)}
+.step-num{font-family:var(--font-head);font-size:56px;font-weight:800;color:rgba(0,255,178,0.08);line-height:1;margin-bottom:16px}
+.step-title{font-family:var(--font-head);font-size:20px;font-weight:800;margin-bottom:10px}
+.step-desc{font-size:14px;color:var(--muted);line-height:1.6}
+
+/* FEATURES */
+.features-section{background:var(--ink2);border-top:1px solid var(--border);padding:120px 60px}
+.features-inner{max-width:1100px;margin:0 auto}
+.features-list{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:60px}
+.feature-item{background:var(--ink);border:1px solid var(--border);border-radius:16px;padding:28px;display:flex;gap:20px;transition:all 0.3s}
+.feature-item:hover{border-color:var(--border2)}
+.fi-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.fi-title{font-family:var(--font-head);font-size:17px;font-weight:800;margin-bottom:8px}
+.fi-desc{font-size:14px;color:var(--muted);line-height:1.6}
+.fi-tag{display:inline-block;margin-top:10px;font-size:11px;font-family:var(--font-mono);padding:3px 10px;border-radius:20px}
+
+/* PRICING */
+.pricing-section{max-width:800px;margin:0 auto;padding:120px 60px;text-align:center}
+.price-card{background:linear-gradient(135deg,rgba(0,255,178,0.06),rgba(123,92,255,0.06));border:1px solid rgba(0,255,178,0.2);border-radius:24px;padding:48px;position:relative;overflow:hidden;margin-top:48px}
+.price-card::before{content:'Best value for agencies';position:absolute;top:0;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--ink);font-size:12px;font-weight:700;padding:6px 20px;border-radius:0 0 12px 12px;font-family:var(--font-head)}
+.pc-name{font-size:13px;color:var(--muted);font-family:var(--font-mono);letter-spacing:0.1em;margin-bottom:16px}
+.pc-price{font-family:var(--font-head);font-size:72px;font-weight:800;letter-spacing:-3px;color:var(--accent);line-height:1}
+.pc-price span{font-size:24px;font-weight:400;color:var(--muted);letter-spacing:0}
+.pc-cycle{font-size:15px;color:var(--muted);margin-bottom:40px}
+.pc-features{display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:left;margin-bottom:40px}
+.pcf{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text)}
+.pcf-check{color:var(--accent)}
+.pc-btn{display:block;background:var(--accent);color:var(--ink);padding:18px;border-radius:14px;font-family:var(--font-head);font-size:18px;font-weight:800;text-decoration:none;transition:all 0.3s}
+.pc-btn:hover{box-shadow:0 0 40px rgba(0,255,178,0.5);transform:translateY(-2px)}
+.roi-note{margin-top:24px;font-size:14px;color:var(--muted);line-height:1.6}
+.roi-note strong{color:var(--accent)}
+
+/* DEMO BOOKING */
+.demo-section{background:var(--ink2);border-top:1px solid var(--border);padding:120px 60px}
+.demo-inner{max-width:600px;margin:0 auto;text-align:center}
+.demo-form{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:36px;text-align:left;margin-top:48px}
+.df-label{font-size:12px;color:var(--muted);font-family:var(--font-mono);letter-spacing:0.1em;display:block;margin-bottom:8px}
+.df-input{width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text);font-family:var(--font-body);font-size:14px;outline:none;transition:all 0.3s;margin-bottom:16px}
+.df-input:focus{border-color:rgba(0,255,178,0.3);background:rgba(0,255,178,0.03)}
+.df-submit{width:100%;background:var(--accent);color:var(--ink);border:none;border-radius:12px;padding:16px;font-family:var(--font-head);font-size:16px;font-weight:800;cursor:pointer;transition:all 0.3s}
+.df-submit:hover{box-shadow:0 0 30px rgba(0,255,178,0.4);transform:translateY(-2px)}
+
+footer{border-top:1px solid var(--border);padding:40px 60px;display:flex;align-items:center;justify-content:space-between}
+.footer-logo{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--muted)}.footer-logo span{color:var(--accent)}
+.footer-links{display:flex;gap:32px}.footer-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color 0.2s}.footer-links a:hover{color:var(--text)}
+.footer-copy{font-size:13px;color:var(--muted);font-family:var(--font-mono)}
+
+@media(max-width:900px){
+  nav{padding:16px 24px}.hero{flex-direction:column;padding:100px 24px 60px;gap:40px}.hero-right{flex:none;width:100%}
+  .steps-grid{grid-template-columns:1fr}.features-list{grid-template-columns:1fr}.stats-inner{grid-template-columns:repeat(2,1fr)}
+  .pc-features{grid-template-columns:1fr}.how-section,.features-section,.pricing-section,.demo-section{padding:80px 24px}
+  footer{flex-direction:column;gap:24px;text-align:center;padding:40px 24px}
+}
+</style>
+</head>
+<body>
+<div class="hero-bg"></div>
+
+<nav>
+  <a href="../index.html" class="logo">Prop<span>Insight</span></a>
+  <div class="nav-links">
+    <a href="../index.html">For Buyers</a>
+    <a href="#how">How It Works</a>
+    <a href="#pricing">Pricing</a>
+  </div>
+  <a href="#demo" class="nav-cta">Book a Demo</a>
+</nav>
+
+<!-- HERO -->
+<div style="max-width:1300px;margin:0 auto">
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">⚡ For Estate Agents & Mortgage Brokers</div>
+    <h1>Close more deals.<br>Build more <span class="accent">trust.</span></h1>
+    <p class="hero-sub">Give every client a professional property intelligence report before they even ask. PropInsight integrates into your workflow — you look like the expert you are.</p>
+    <div class="hero-actions">
+      <a href="#demo" class="btn-p">Book a 20-min Demo</a>
+      <a href="report.html" class="btn-s">See a sample report</a>
+    </div>
+    <div style="margin-top:32px;display:flex;gap:24px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)"><span style="color:var(--accent)">✓</span>No setup fee</div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)"><span style="color:var(--accent)">✓</span>White-label reports</div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)"><span style="color:var(--accent)">✓</span>Cancel anytime</div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="agent-card">
+      <div class="ac-header">
+        <div class="acd r"></div><div class="acd y"></div><div class="acd g"></div>
+        <span style="margin-left:8px;font-family:var(--font-mono);font-size:11px;color:var(--muted)">Agent Dashboard — REA Cork</span>
+      </div>
+      <div class="ac-body">
+        <div style="font-size:11px;color:var(--muted);font-family:var(--font-mono);margin-bottom:12px">LATEST REPORT — Generated for client viewing</div>
+        <div class="agent-report-preview">
+          <div class="arp-eircode">T12 XY34</div>
+          <div class="arp-addr">Model Farm Road, Bishopstown · Report #1,247</div>
+          <div class="arp-scores">
+            <div class="arp-score"><div class="arps-label">Flood</div><div class="arps-val arps-g">LOW</div></div>
+            <div class="arp-score"><div class="arps-label">Crime</div><div class="arps-val arps-g">67</div></div>
+            <div class="arp-score"><div class="arps-label">Planning</div><div class="arps-val arps-a">3!</div></div>
+          </div>
+        </div>
+        <div class="agent-action-row">
+          <a href="report.html" class="aa-btn aa-outline">View Report</a>
+          <a href="report.html" class="aa-btn aa-solid">Share with Client</a>
+        </div>
+        <div class="client-tag">
+          <div class="ct-avatar" style="background:rgba(0,255,178,0.15);color:var(--accent)">SM</div>
+          <div class="ct-text">Report shared with <strong>Siobhán Murphy</strong> — viewed 3 times</div>
+          <div class="ct-badge">LIVE</div>
+        </div>
+        <div class="client-tag">
+          <div class="ct-avatar" style="background:rgba(123,92,255,0.15);color:var(--accent2)">DC</div>
+          <div class="ct-text">Report shared with <strong>Declan Casey</strong> — awaiting view</div>
+          <div class="ct-badge" style="background:rgba(255,184,48,0.1);color:var(--warn)">SENT</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- STATS -->
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div><div class="stat-n">8×</div><div class="stat-l">more trust signals vs competitors</div></div>
+    <div><div class="stat-n">3min</div><div class="stat-l">to generate and share a report</div></div>
+    <div><div class="stat-n">€249</div><div class="stat-l">per office per month — unlimited reports</div></div>
+    <div><div class="stat-n">67+</div><div class="stat-l">Cork agents already on waitlist</div></div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="how-section" id="how">
+  <div class="section-label">How It Works</div>
+  <h2 class="section-title">Three steps.<br>Impressed clients.</h2>
+  <p class="section-sub">Built for agents who are already busy. PropInsight takes 3 minutes, not 3 hours.</p>
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">01</div>
+      <div class="step-title">Enter the Eircode</div>
+      <div class="step-desc">Log in to your PropInsight dashboard. Type in the property Eircode. We pull data from 8 government sources simultaneously.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">02</div>
+      <div class="step-title">Review the report</div>
+      <div class="step-desc">Your branded PDF is generated in under 60 seconds. Review it, add notes if needed, and share it with one click via a secure link or download.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">03</div>
+      <div class="step-title">Win the client's trust</div>
+      <div class="step-desc">Your client opens the report before or after the viewing. They see you've done the homework they didn't know they needed. You close more deals.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div class="features-section">
+  <div class="features-inner">
+    <div class="section-label">Agent Features</div>
+    <h2 class="section-title">Built for professional use</h2>
+    <div class="features-list">
+      <div class="feature-item">
+        <div class="fi-icon" style="background:rgba(0,255,178,0.1)">🏷️</div>
+        <div>
+          <div class="fi-title">White-label reports</div>
+          <div class="fi-desc">Your logo, your colours, your brand. Clients see a professional report from your agency — not a third-party tool.</div>
+          <div class="fi-tag" style="background:rgba(0,255,178,0.1);color:var(--accent);border:1px solid rgba(0,255,178,0.2)">Agency plan</div>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon" style="background:rgba(123,92,255,0.1)">📤</div>
+        <div>
+          <div class="fi-title">Client sharing portal</div>
+          <div class="fi-desc">Share reports via a secure link. See when your client opens it, how many times they viewed it, and whether they've viewed the comparison.</div>
+          <div class="fi-tag" style="background:rgba(123,92,255,0.1);color:var(--accent2);border:1px solid rgba(123,92,255,0.2)">All plans</div>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon" style="background:rgba(255,184,48,0.1)">📁</div>
+        <div>
+          <div class="fi-title">Portfolio dashboard</div>
+          <div class="fi-desc">Track every property you've run a report on. Filter by status, area, risk level. See your full pipeline at a glance.</div>
+          <div class="fi-tag" style="background:rgba(255,184,48,0.1);color:var(--warn);border:1px solid rgba(255,184,48,0.2)">Agency plan</div>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon" style="background:rgba(255,77,109,0.1)">🔗</div>
+        <div>
+          <div class="fi-title">Comparison tool</div>
+          <div class="fi-desc">Show clients a side-by-side comparison of two or three properties. Helps them decide faster, spend less time in indecision, and close more efficiently.</div>
+          <div class="fi-tag" style="background:rgba(0,255,178,0.1);color:var(--accent);border:1px solid rgba(0,255,178,0.2)">Included</div>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon" style="background:rgba(0,255,178,0.1)">🔔</div>
+        <div>
+          <div class="fi-title">Price & planning alerts</div>
+          <div class="fi-desc">Set alerts on any property or area. Get notified when new planning applications are filed, or when comparable prices shift significantly.</div>
+          <div class="fi-tag" style="background:rgba(0,255,178,0.1);color:var(--accent);border:1px solid rgba(0,255,178,0.2)">Agency plan</div>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon" style="background:rgba(123,92,255,0.1)">🔌</div>
+        <div>
+          <div class="fi-title">Unlimited team members</div>
+          <div class="fi-desc">One price for your whole office. Every agent in your team gets their own login. No per-seat fees, no complicated user management.</div>
+          <div class="fi-tag" style="background:rgba(123,92,255,0.1);color:var(--accent2);border:1px solid rgba(123,92,255,0.2)">Agency plan</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<div class="pricing-section" id="pricing">
+  <div class="section-label" style="justify-content:center"><span>Agent Pricing</span></div>
+  <h2 class="section-title">One price.<br>Your whole office.</h2>
+  <p class="section-sub" style="margin:0 auto">If you run 20+ property views a month, PropInsight pays for itself by closing one extra deal.</p>
+  <div class="price-card">
+    <div class="pc-name">AGENCY PLAN</div>
+    <div class="pc-price">€249<span>/mo</span></div>
+    <div class="pc-cycle">per office · all agents included · cancel anytime</div>
+    <div class="pc-features">
+      <div class="pcf"><span class="pcf-check">✓</span>Unlimited property reports</div>
+      <div class="pcf"><span class="pcf-check">✓</span>White-label branded reports</div>
+      <div class="pcf"><span class="pcf-check">✓</span>Client sharing portal</div>
+      <div class="pcf"><span class="pcf-check">✓</span>Side-by-side property comparison</div>
+      <div class="pcf"><span class="pcf-check">✓</span>Portfolio dashboard</div>
+      <div class="pcf"><span class="pcf-check">✓</span>Planning & price alerts</div>
+      <div class="pcf"><span class="pcf-check">✓</span>Unlimited team members</div>
+      <div class="pcf"><span class="pcf-check">✓</span>Priority support (same day)</div>
+    </div>
+    <a href="#demo" class="pc-btn">Start Free 14-Day Trial</a>
+    <div class="roi-note">If one client converts because of your report, that's <strong>€3,000–8,000 in commission</strong> from a €249 tool. The ROI case writes itself.</div>
+  </div>
+</div>
+
+<!-- DEMO BOOKING -->
+<div class="demo-section" id="demo">
+  <div class="demo-inner">
+    <div class="section-label" style="justify-content:center"><span>Book a Demo</span></div>
+    <h2 class="section-title">See it in<br>your workflow</h2>
+    <p class="section-sub" style="margin:0 auto 0">20-minute Zoom demo, tailored to your agency setup. No obligation, no hard sell.</p>
+    <div class="demo-form">
+      <label class="df-label">Your name</label>
+      <input type="text" class="df-input" placeholder="Siobhán Murphy"/>
+      <label class="df-label">Agency name</label>
+      <input type="text" class="df-input" placeholder="REA Cork / DNG / Sherry FitzGerald..."/>
+      <label class="df-label">Email</label>
+      <input type="email" class="df-input" placeholder="you@agency.ie"/>
+      <label class="df-label">How many properties does your office manage?</label>
+      <select class="df-input" style="cursor:pointer">
+        <option>1–20 properties</option>
+        <option>20–100 properties</option>
+        <option>100–500 properties</option>
+        <option>500+ properties</option>
+      </select>
+      <button class="df-submit" onclick="this.textContent='✓ Request sent — we\'ll be in touch within 24hrs';this.style.background='var(--surface)';this.style.color='var(--accent)';this.style.border='1px solid rgba(0,255,178,0.3)'">Book My Demo →</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">Prop<span>Insight</span></div>
+  <div class="footer-links">
+    <a href="../index.html">For Buyers</a>
+    <a href="../index.html#pricing">Pricing</a>
+    <a href="report.html">Sample Report</a>
+  </div>
+  <div class="footer-copy">© 2025 PropInsight · Cork, Ireland</div>
+</footer>
+</body>
+</html>

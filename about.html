@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>PropInsight — About</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Grotesk:wght@300;400;500&family=DM+Mono:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+:root{--ink:#0A0A0F;--ink2:#13131A;--surface:#16161F;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);--text:#E8E8F0;--muted:#8888A8;--accent:#00FFB2;--accent2:#7B5CFF;--accent3:#FF4D6D;--warn:#FFB830;--font-head:'Syne',sans-serif;--font-body:'Space Grotesk',sans-serif;--font-mono:'DM Mono',monospace;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}body{background:var(--ink);color:var(--text);font-family:var(--font-body);overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;opacity:0.4}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,15,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.logo{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--text);text-decoration:none}.logo span{color:var(--accent)}
+.nav-cta{background:var(--accent);color:var(--ink);padding:10px 22px;border-radius:100px;font-size:14px;font-weight:700;text-decoration:none;font-family:var(--font-head)}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;transition:color 0.2s}.nav-links a:hover{color:var(--text)}
+.nav-links{display:flex;gap:40px}
+
+.hero{padding:160px 60px 100px;max-width:900px;margin:0 auto;text-align:center}
+.h-eyebrow{font-family:var(--font-mono);font-size:12px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;justify-content:center;gap:12px}
+.h-eyebrow::before,.h-eyebrow::after{content:'';width:30px;height:1px;background:var(--accent);opacity:0.5}
+.h-title{font-family:var(--font-head);font-size:clamp(44px,5vw,68px);font-weight:800;letter-spacing:-2px;line-height:1.05;margin-bottom:24px}
+.h-sub{font-size:18px;color:var(--muted);line-height:1.7;font-weight:300;max-width:640px;margin:0 auto}
+
+.mission-section{max-width:800px;margin:0 auto;padding:80px 60px}
+.mission-quote{font-family:var(--font-head);font-size:clamp(22px,3vw,32px);font-weight:800;line-height:1.4;letter-spacing:-0.5px;margin-bottom:32px;color:var(--text)}
+.mission-quote .accent{color:var(--accent)}
+.mission-body{font-size:16px;color:var(--muted);line-height:1.8;font-weight:300}
+.mission-body p{margin-bottom:16px}
+.mission-body strong{color:var(--text);font-weight:500}
+
+.data-section{background:var(--ink2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:100px 60px}
+.data-inner{max-width:1000px;margin:0 auto}
+.section-label{font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.section-label::before{content:'';width:24px;height:1px;background:var(--accent)}
+.section-title{font-family:var(--font-head);font-size:clamp(32px,4vw,48px);font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:40px}
+.data-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.data-card{background:var(--ink);border:1px solid var(--border);border-radius:16px;padding:24px;display:flex;gap:16px;transition:all 0.3s}
+.data-card:hover{border-color:var(--border2)}
+.dc-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.dc-name{font-size:15px;font-weight:500;color:var(--text);margin-bottom:4px}
+.dc-url{font-family:var(--font-mono);font-size:11px;color:var(--accent);margin-bottom:6px}
+.dc-desc{font-size:13px;color:var(--muted);line-height:1.5}
+.dc-badge{display:inline-block;margin-top:8px;font-size:10px;font-family:var(--font-mono);padding:2px 8px;border-radius:20px;background:rgba(0,255,178,0.08);color:var(--accent);border:1px solid rgba(0,255,178,0.15)}
+
+.values-section{max-width:900px;margin:0 auto;padding:100px 60px}
+.values-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+.value-card{padding:28px;border:1px solid var(--border);border-radius:16px;background:var(--surface)}
+.v-num{font-family:var(--font-mono);font-size:11px;color:var(--muted);margin-bottom:12px}
+.v-title{font-family:var(--font-head);font-size:18px;font-weight:800;margin-bottom:10px}
+.v-desc{font-size:14px;color:var(--muted);line-height:1.6}
+
+.cta-section{background:var(--ink2);border-top:1px solid var(--border);padding:120px 60px;text-align:center}
+.cta-title{font-family:var(--font-head);font-size:clamp(36px,5vw,60px);font-weight:800;letter-spacing:-2px;line-height:1.05;margin-bottom:20px}
+.cta-sub{font-size:17px;color:var(--muted);margin-bottom:48px;line-height:1.6;font-weight:300}
+.btn-p{background:var(--accent);color:var(--ink);padding:16px 40px;border-radius:100px;font-size:16px;font-weight:700;text-decoration:none;font-family:var(--font-head);transition:all 0.3s;display:inline-block}
+.btn-p:hover{box-shadow:0 0 40px rgba(0,255,178,0.5);transform:translateY(-2px)}
+
+footer{border-top:1px solid var(--border);padding:40px 60px;display:flex;align-items:center;justify-content:space-between}
+.footer-logo{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--muted)}.footer-logo span{color:var(--accent)}
+.footer-links{display:flex;gap:32px}.footer-links a{font-size:13px;color:var(--muted);text-decoration:none}.footer-links a:hover{color:var(--text)}
+.footer-copy{font-size:13px;color:var(--muted);font-family:var(--font-mono)}
+
+@media(max-width:768px){
+  nav{padding:16px 24px}.nav-links{display:none}
+  .hero,.mission-section,.data-section,.values-section,.cta-section{padding:80px 24px}
+  .data-grid{grid-template-columns:1fr}.values-grid{grid-template-columns:1fr}
+  footer{flex-direction:column;gap:24px;text-align:center;padding:40px 24px}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="../index.html" class="logo">Prop<span>Insight</span></a>
+  <div class="nav-links">
+    <a href="../index.html#features">Features</a>
+    <a href="../index.html#pricing">Pricing</a>
+    <a href="agents.html">For Agents</a>
+  </div>
+  <a href="report.html" class="nav-cta">Try Free</a>
+</nav>
+
+<div class="hero">
+  <div class="h-eyebrow">Our Story</div>
+  <h1 class="h-title">Built because we nearly bought the wrong house</h1>
+  <p class="h-sub">PropInsight started with a personal frustration — spending 4 evenings researching a single property across six different government websites. There had to be a better way.</p>
+</div>
+
+<div class="mission-section">
+  <div class="mission-quote">Ireland's housing market is the most <span class="accent">consequential financial decision</span> most people will ever make. Yet the information infrastructure is stuck in 2005.</div>
+  <div class="mission-body">
+    <p>The data exists. The OPW publishes flood maps. An Bord Pleanála publishes planning decisions. The Property Price Register publishes every sale. An Garda Síochána publishes crime statistics. But they're scattered across different portals, in different formats, with different interfaces — and most buyers have no idea any of it exists until it's too late.</p>
+    <p>We built PropInsight to fix that. <strong>One Eircode. One report. Every data source that matters.</strong> Plain English, not government jargon. In 60 seconds, not 4 hours.</p>
+    <p>We're starting with Cork — because we know it, because the data is there, and because 61,000+ transactions in the PPR alone gives us a solid foundation. <strong>Dublin, Galway, and Limerick are next.</strong></p>
+  </div>
+</div>
+
+<div class="data-section">
+  <div class="data-inner">
+    <div class="section-label">Data Sources</div>
+    <h2 class="section-title">8 public sources.<br>Zero guesswork.</h2>
+    <div class="data-grid">
+      <div class="data-card">
+        <div class="dc-icon" style="background:rgba(0,140,255,0.1)">🌊</div>
+        <div>
+          <div class="dc-name">OPW Flood Risk Maps</div>
+          <div class="dc-url">floodinfo.ie / data.gov.ie</div>
+          <div class="dc-desc">CFRAM programme flood zone data covering river, coastal and surface water flood risk. Updated annually.</div>
+          <div class="dc-badge">WMS API · Free · Public</div>
+        </div>
+      </div>
+      <div class="data-card">
+        <div class="dc-icon" style="background:rgba(255,140,0,0.1)">🏗️</div>
+        <div>
+          <div class="dc-name">Planning Applications</div>
+          <div class="dc-url">eplanning.ie · abp.ie</div>
+          <div class="dc-desc">All planning applications submitted to local authorities and An Bord Pleanála, including status and decision.</div>
+          <div class="dc-badge">Public Data · Aggregated</div>
+        </div>
+      </div>
+      <div class="data-card">
+        <div class="dc-icon" style="background:rgba(255,77,109,0.1)">🚔</div>
+        <div>
+          <div class="dc-name">Garda Crime Statistics</div>
+          <div class="dc-url">garda.ie · CSO</div>
+          <div class="dc-desc">Annual Garda crime statistics by division and district, indexed per 1,000 population and benchmarked nationally.</div>
+          <div class="dc-badge">Annual Report · Processed</div>
+        </div>
+      </div>
+      <div class="data-card">
+        <div class="dc-icon" style="background:rgba(123,92,255,0.1)">🏠</div>
+        <div>
+          <div class="dc-name">Property Price Register</div>
+          <div class="dc-url">propertypriceregister.ie</div>
+          <div class="dc-desc">Every residential property sale in Ireland since 2010. Full price, address, date. Updated monthly. 772,000+ records.</div>
+          <div class="dc-badge">CSV Download · Monthly</div>
+        </div>
+      </div>
+      <div class="data-card">
+        <div class="dc-icon" style="background:rgba(0,200,120,0.1)">🏫</div>
+        <div>
+          <div class="dc-name">School Catchment Areas</div>
+          <div class="dc-url">education.gov.ie · OSI</div>
+          <div class="dc-desc">Primary and secondary school locations, catchment boundaries, capacity data from the Department of Education.</div>
+          <div class="dc-badge">OSI GeoJSON · Public</div>
+        </div>
+      </div>
+      <div class="data-card">
+        <div class="dc-icon" style="background:rgba(0,180,255,0.1)">💧</div>
+        <div>
+          <div class="dc-name">Irish Water Infrastructure</div>
+          <div class="dc-url">water.ie · data.gov.ie</div>
+          <div class="dc-desc">Water supply infrastructure data, known service disruptions, and planned upgrade programmes by area.</div>
+          <div class="dc-badge">Open Data · Aggregated</div>
+        </div>
+      </div>
+      <div class="data-card">
+        <div class="dc-icon" style="background:rgba(255,184,48,0.1)">📊</div>
+        <div>
+          <div class="dc-name">CSO Census & Housing</div>
+          <div class="dc-url">cso.ie</div>
+          <div class="dc-desc">Small area population data, housing density, vacancy rates, and demographic indicators from Census 2022.</div>
+          <div class="dc-badge">Open API · Census 2022</div>
+        </div>
+      </div>
+      <div class="data-card">
+        <div class="dc-icon" style="background:rgba(0,255,178,0.1)">📍</div>
+        <div>
+          <div class="dc-name">OSI Eircode Geocoder</div>
+          <div class="dc-url">osi.ie / GeoHive</div>
+          <div class="dc-desc">Ordnance Survey Ireland's official geocoding service, converting Eircodes to precise GPS coordinates for spatial queries.</div>
+          <div class="dc-badge">REST API · OSI Licensed</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="values-section">
+  <div class="section-label">Principles</div>
+  <h2 class="section-title">How we work</h2>
+  <div class="values-grid">
+    <div class="value-card">
+      <div class="v-num">01</div>
+      <div class="v-title">Public data, clearly explained</div>
+      <div class="v-desc">Every data source we use is publicly available. We don't create information — we make existing government data usable for normal people.</div>
+    </div>
+    <div class="value-card">
+      <div class="v-num">02</div>
+      <div class="v-title">Plain English, not jargon</div>
+      <div class="v-desc">"OPW CFRAM Flood Zone A" means nothing to most buyers. We translate every data point into a clear, actionable statement.</div>
+    </div>
+    <div class="value-card">
+      <div class="v-num">03</div>
+      <div class="v-title">We're a tool, not advice</div>
+      <div class="v-desc">PropInsight gives you information. We strongly recommend you use it alongside your solicitor and surveyor — not instead of them.</div>
+    </div>
+  </div>
+</div>
+
+<div class="cta-section">
+  <h2 class="cta-title">Try it on any<br>Cork property</h2>
+  <p class="cta-sub">First report is always free. No account needed. Just an Eircode.</p>
+  <a href="report.html" class="btn-p">Run a Free Report →</a>
+</div>
+
+<footer>
+  <div class="footer-logo">Prop<span>Insight</span></div>
+  <div class="footer-links">
+    <a href="../index.html">Home</a>
+    <a href="../index.html#pricing">Pricing</a>
+    <a href="agents.html">For Agents</a>
+    <a href="report.html">Try Free</a>
+  </div>
+  <div class="footer-copy">© 2025 PropInsight · Cork, Ireland</div>
+</footer>
+</body>
+</html>
