@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>PropInsight — Property Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --cream:#FAF8F4;--cream2:#F2EFE9;--cream3:#E8E3DA;
+  --forest:#1C3D2E;--forest2:#254D3A;--forest3:#2E6049;--moss:#5A8A6A;
+  --gold:#C4933A;--rust:#C4522A;--sky:#3A6B9A;
+  --ink:#1A1A1A;--ink2:#3D3D3D;--ink3:#7A7A7A;--ink4:#ADADAD;
+  --white:#FFFFFF;--border:rgba(28,61,46,0.1);--border2:rgba(28,61,46,0.18);
+  --shadow:0 2px 20px rgba(28,61,46,0.08);--shadow2:0 8px 48px rgba(28,61,46,0.12);
+  --font-h:'Playfair Display',Georgia,serif;--font-b:'Plus Jakarta Sans',system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{background:var(--cream);color:var(--ink);font-family:var(--font-b);overflow-x:hidden;cursor:none}
+#cur,#cur-ring{position:fixed;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
+#cur{width:8px;height:8px;background:var(--forest)}
+#cur-ring{width:32px;height:32px;border:1.5px solid rgba(28,61,46,0.3)}
+@media(hover:none){#cur,#cur-ring{display:none}body{cursor:auto}}
+
+/* INPUT */
+.i-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;position:relative;overflow:hidden}
+.i-bg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(28,61,46,0.05),transparent 65%);border-radius:50%;pointer-events:none}
+.i-box{width:100%;max-width:520px;position:relative;z-index:1;text-align:center}
+.i-logo{display:inline-flex;align-items:center;gap:10px;text-decoration:none;margin-bottom:52px}
+.i-logo-mark{width:34px;height:34px;background:var(--forest);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:var(--font-h);font-size:17px;color:var(--cream);font-weight:700}
+.i-logo-text{font-family:var(--font-h);font-size:18px;font-weight:700;color:var(--forest)}
+.i-title{font-family:var(--font-h);font-size:clamp(36px,5vw,54px);font-weight:900;letter-spacing:-1.5px;line-height:1.06;color:var(--forest);margin-bottom:14px}
+.i-title em{font-style:italic;font-weight:400;color:var(--gold)}
+.i-sub{font-size:15px;color:var(--ink2);margin-bottom:40px;line-height:1.65;font-weight:400}
+.i-form{background:var(--white);border:1.5px solid var(--border2);border-radius:18px;padding:28px;text-align:left;box-shadow:var(--shadow2)}
+.i-label{font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.12em;text-transform:uppercase;display:block;margin-bottom:10px}
+.i-field{width:100%;background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:14px 18px;font-family:var(--font-h);font-size:28px;font-weight:900;color:var(--forest);letter-spacing:.1em;outline:none;text-transform:uppercase;transition:all .25s;margin-bottom:8px}
+.i-field::placeholder{color:var(--cream3);font-weight:400;font-size:24px}
+.i-field:focus{border-color:var(--forest);box-shadow:0 0 0 3px rgba(28,61,46,0.08)}
+.i-hints{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.i-hint{font-size:12px;color:var(--forest);font-weight:600;cursor:pointer;background:rgba(28,61,46,0.07);padding:4px 10px;border-radius:100px;border:1px solid var(--border);transition:all .2s}
+.i-hint:hover{background:var(--forest);color:var(--cream)}
+.i-btn{width:100%;background:var(--forest);color:var(--cream);border:none;border-radius:10px;padding:15px;font-family:var(--font-b);font-size:15px;font-weight:700;cursor:pointer;transition:all .25s;letter-spacing:.02em}
+.i-btn:hover{background:var(--forest2);box-shadow:0 4px 20px rgba(28,61,46,0.3);transform:translateY(-1px)}
+
+/* LOADING */
+.l-screen{display:none;min-height:100vh;align-items:center;justify-content:center;flex-direction:column;gap:32px;padding:40px;text-align:center}
+.l-ec{font-family:var(--font-h);font-size:54px;font-weight:900;color:var(--forest);letter-spacing:.1em;line-height:1}
+.l-sub{font-size:14px;color:var(--ink3);font-weight:500}
+.l-bar-wrap{width:380px;max-width:90vw;height:3px;background:var(--cream3);border-radius:2px;overflow:hidden}
+.l-bar{height:100%;background:var(--forest);width:0%;transition:width .5s ease;border-radius:2px}
+.l-steps{display:flex;flex-direction:column;gap:8px;width:380px;max-width:90vw}
+.l-step{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--ink4);transition:all .3s;font-weight:500;padding:8px 0}
+.l-step.active{color:var(--forest);font-weight:600}
+.l-step.done{color:var(--moss)}
+.ls-ico{width:14px;text-align:center;flex-shrink:0}
+
+/* REPORT */
+.r-screen{display:none}
+.r-nav{position:sticky;top:0;z-index:50;background:rgba(250,248,244,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 40px;height:60px;display:flex;align-items:center;gap:16px}
+.rn-logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+.rn-mark{width:28px;height:28px;background:var(--forest);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:var(--font-h);font-size:14px;color:var(--cream);font-weight:700;flex-shrink:0}
+.rn-name{font-family:var(--font-h);font-size:15px;font-weight:700;color:var(--forest)}
+.rn-sep{color:var(--ink4)}
+.rn-ec{font-family:var(--font-h);font-size:15px;font-weight:900;color:var(--forest);letter-spacing:.06em}
+.rn-addr{font-size:13px;color:var(--ink3);font-weight:500}
+.rn-actions{margin-left:auto;display:flex;gap:8px}
+.rna{padding:7px 16px;border-radius:100px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:var(--font-b);text-decoration:none;border:1.5px solid var(--border2);color:var(--forest);background:transparent}
+.rna:hover{border-color:var(--forest);background:rgba(28,61,46,0.05)}
+.rna.solid{background:var(--forest);color:var(--cream);border-color:transparent}
+.rna.solid:hover{background:var(--forest2)}
+
+.r-hero{padding:40px 40px 32px;background:linear-gradient(180deg,rgba(28,61,46,0.04),transparent);border-bottom:1px solid var(--border)}
+.rh-kicker{font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
+.rh-ec{font-family:var(--font-h);font-size:clamp(44px,6vw,68px);font-weight:900;color:var(--forest);letter-spacing:-1px;line-height:1;margin-bottom:8px}
+.rh-addr{font-size:19px;font-weight:500;color:var(--ink);margin-bottom:20px}
+.rh-pills{display:flex;gap:8px;flex-wrap:wrap}
+.rh-pill{display:flex;align-items:center;gap:7px;background:var(--white);border:1px solid var(--border);border-radius:100px;padding:6px 14px;font-size:12px;color:var(--ink2);font-weight:500}
+.rh-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--forest)}
+
+.score-strip{padding:22px 40px;background:var(--cream2);border-bottom:1px solid var(--border)}
+.score-row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.s-box{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px 12px;text-align:center;transition:all .25s;cursor:default}
+.s-box:hover{border-color:var(--border2);box-shadow:var(--shadow);transform:translateY(-1px)}
+.si{font-size:20px;margin-bottom:6px}.sl{font-size:9.5px;font-weight:700;color:var(--ink3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.sv{font-family:var(--font-h);font-size:22px;font-weight:900;line-height:1;margin-bottom:4px}
+.sv-g{color:#2D7A4A}.sv-a{color:var(--gold)}.sv-r{color:var(--rust)}.sv-b{color:var(--sky)}
+.sb{font-size:10px;padding:2px 8px;border-radius:100px;display:inline-block}
+.sb-g{background:rgba(45,122,74,0.1);color:#2D7A4A;border:1px solid rgba(45,122,74,0.2)}
+.sb-a{background:rgba(196,147,58,0.1);color:var(--gold);border:1px solid rgba(196,147,58,0.2)}
+.sb-r{background:rgba(196,82,42,0.1);color:var(--rust);border:1px solid rgba(196,82,42,0.2)}
+
+.r-body{max-width:1120px;margin:0 auto;padding:32px 40px;display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:start}
+.r-main{display:flex;flex-direction:column;gap:20px}
+.r-aside{position:sticky;top:72px;display:flex;flex-direction:column;gap:16px}
+.r-sec{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.rs-head{padding:16px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:var(--cream2)}
+.rs-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.rs-title{font-family:var(--font-h);font-size:16px;font-weight:700;letter-spacing:-.2px;flex:1}
+.rs-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:100px}
+.rs-body{padding:20px 22px}
+.d-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.d-item{background:var(--cream);border:1px solid var(--border);border-radius:10px;padding:12px}
+.di-l{font-size:10.5px;font-weight:700;color:var(--ink3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.di-v{font-size:14px;font-weight:600;color:var(--ink)}
+.di-s{font-size:11px;color:var(--ink3);margin-top:2px}
+.rbar{margin:14px 0}
+.rbar-row{display:flex;justify-content:space-between;font-size:12px;color:var(--ink3);margin-bottom:5px;font-weight:500}
+.rbar-track{height:4px;background:var(--cream3);border-radius:2px;overflow:hidden}
+.rbar-fill{height:100%;border-radius:2px;transition:width 1.8s cubic-bezier(.22,1,.36,1)}
+.r-note{font-size:13px;color:var(--ink2);line-height:1.65;margin-top:14px}
+.plan-list{display:flex;flex-direction:column;gap:9px}
+.plan-item{background:var(--cream);border:1px solid var(--border);border-radius:10px;padding:12px 15px;display:flex;gap:11px}
+.ps{flex-shrink:0;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;height:fit-content;margin-top:2px;letter-spacing:.05em}
+.ps-g{background:rgba(45,122,74,0.1);color:#2D7A4A;border:1px solid rgba(45,122,74,0.2)}
+.ps-a{background:rgba(196,147,58,0.1);color:var(--gold);border:1px solid rgba(196,147,58,0.2)}
+.ps-r{background:rgba(196,82,42,0.1);color:var(--rust);border:1px solid rgba(196,82,42,0.2)}
+.pi-desc{font-size:13px;color:var(--ink);line-height:1.5;font-weight:500}
+.pi-meta{font-size:11px;color:var(--ink3);margin-top:3px}
+.sch-list{display:flex;flex-direction:column;gap:8px}
+.sch-item{display:flex;align-items:center;gap:12px;background:var(--cream);border:1px solid var(--border);border-radius:10px;padding:12px}
+.sch-d{font-size:12px;color:var(--ink3);min-width:42px;font-weight:600}
+.sch-name{font-size:13.5px;font-weight:600;color:var(--ink);flex:1}
+.sch-type{font-size:11px;color:var(--ink3);margin-top:1px}
+.sch-r{font-size:12px;padding:2px 8px;border-radius:6px;font-weight:700}
+.sr-g{background:rgba(45,122,74,0.1);color:#2D7A4A}
+.sr-a{background:rgba(196,147,58,0.1);color:var(--gold)}
+.ch-wrap{height:150px;position:relative;margin:10px 0}
+
+/* Aside */
+.a-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px}
+.ac-t{font-family:var(--font-h);font-size:15px;font-weight:700;margin-bottom:14px;letter-spacing:-.2px}
+.score-ring{text-align:center;padding:10px 0}
+.sr-wrap{width:86px;height:86px;margin:0 auto 10px;position:relative}
+.sr-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-h);font-size:28px;font-weight:900;color:var(--forest)}
+.sr-lbl{font-size:12px;color:var(--ink3);font-weight:500}
+.sb-rows{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.sbr{display:flex;justify-content:space-between;font-size:13px;align-items:center}
+.sbr-k{color:var(--ink2);font-weight:500}
+.sbr-v{font-weight:700;font-size:12px}
+.watch-card{background:rgba(196,147,58,0.05);border:1px solid rgba(196,147,58,0.2);border-radius:14px;padding:18px}
+.wc-h{font-size:10px;font-weight:800;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.wc-b{font-size:13px;color:var(--ink);line-height:1.55;font-weight:500}
+.up-card{background:linear-gradient(135deg,rgba(28,61,46,0.06),rgba(28,61,46,0.02));border:1px solid var(--border2);border-radius:14px;padding:20px;text-align:center}
+.uc-t{font-family:var(--font-h);font-size:15px;font-weight:700;margin-bottom:8px;color:var(--forest)}
+.uc-s{font-size:13px;color:var(--ink2);line-height:1.5;margin-bottom:16px}
+.uc-btn{display:block;background:var(--forest);color:var(--cream);padding:10px;border-radius:10px;font-size:13.5px;font-weight:700;text-decoration:none;transition:all .25s}
+.uc-btn:hover{background:var(--forest2);box-shadow:0 4px 16px rgba(28,61,46,0.3)}
+
+@media(max-width:900px){
+  .r-body{grid-template-columns:1fr;padding:20px}
+  .r-aside{position:static}
+  .score-row{grid-template-columns:repeat(3,1fr)}
+  .r-hero,.score-strip{padding-left:20px;padding-right:20px}
+  .r-nav{padding:0 16px}
+  .rn-addr{display:none}
+  .d-grid{grid-template-columns:1fr}
+  body{cursor:auto}#cur,#cur-ring{display:none}
+}
+@media(max-width:480px){
+  .score-row{grid-template-columns:repeat(2,1fr)}
+  .s-box:nth-child(5),.s-box:nth-child(6){display:none}
+}
+</style>
+</head>
+<body>
+<div id="cur"></div><div id="cur-ring"></div>
+
+<!-- INPUT -->
+<div id="s-i" class="i-screen">
+  <div class="i-bg"></div>
+  <div class="i-box">
+    <a href="index.html" class="i-logo"><div class="i-logo-mark">P</div><span class="i-logo-text">PropInsight</span></a>
+    <h1 class="i-title">Know your property<br><em>inside out</em></h1>
+    <p class="i-sub">Enter any Cork Eircode. Full property intelligence report in 60 seconds. First one's free — no account needed.</p>
+    <div class="i-form">
+      <label class="i-label">Cork Eircode</label>
+      <input type="text" class="i-field" id="ec-f" placeholder="T12 XXXX" maxlength="8" autocomplete="off"/>
+      <div class="i-hints">
+        <span class="i-hint" onclick="fill('T12 XY34')">T12 XY34</span>
+        <span class="i-hint" onclick="fill('P43 AB12')">P43 AB12</span>
+        <span class="i-hint" onclick="fill('T23 CD56')">T23 CD56</span>
+      </div>
+      <button class="i-btn" onclick="startLoad()">Analyse this property →</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div id="s-l" class="l-screen">
+  <div>
+    <div style="font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px">Analysing</div>
+    <div class="l-ec" id="l-ec">T12 XY34</div>
+    <div class="l-sub" id="l-sub">Querying 8 government data sources...</div>
+  </div>
+  <div class="l-bar-wrap"><div class="l-bar" id="l-bar"></div></div>
+  <div class="l-steps">
+    <div class="l-step" id="ls0"><span class="ls-ico">○</span>Geocoding Eircode — OSI database</div>
+    <div class="l-step" id="ls1"><span class="ls-ico">○</span>OPW flood zone classification</div>
+    <div class="l-step" id="ls2"><span class="ls-ico">○</span>Planning applications (500m radius)</div>
+    <div class="l-step" id="ls3"><span class="ls-ico">○</span>Garda crime statistics</div>
+    <div class="l-step" id="ls4"><span class="ls-ico">○</span>Property Price Register — price history</div>
+    <div class="l-step" id="ls5"><span class="ls-ico">○</span>School catchment areas</div>
+    <div class="l-step" id="ls6"><span class="ls-ico">○</span>Irish Water infrastructure</div>
+    <div class="l-step" id="ls7"><span class="ls-ico">○</span>Building your report</div>
+  </div>
+</div>
+
+<!-- REPORT -->
+<div id="s-r" class="r-screen">
+  <nav class="r-nav">
+    <a href="index.html" class="rn-logo"><div class="rn-mark">P</div><span class="rn-name">PropInsight</span></a>
+    <span class="rn-sep">·</span>
+    <span class="rn-ec" id="rn-ec">T12 XY34</span>
+    <span class="rn-sep">·</span>
+    <span class="rn-addr" id="rn-addr">Bishopstown</span>
+    <div class="rn-actions">
+      <button class="rna" onclick="window.print()">⬇ PDF</button>
+      <button class="rna" onclick="navigator.clipboard?.writeText(location.href)">⎘ Share</button>
+      <button class="rna solid" onclick="resetApp()">New report</button>
+    </div>
+  </nav>
+
+  <div class="r-hero">
+    <div class="rh-kicker">Property intelligence report · <span id="rh-date"></span></div>
+    <div class="rh-ec" id="rh-ec">T12 XY34</div>
+    <div class="rh-addr" id="rh-addr">Model Farm Road, Bishopstown, Cork</div>
+    <div class="rh-pills">
+      <div class="rh-pill"><div class="dot"></div>8 data sources</div>
+      <div class="rh-pill"><div class="dot"></div>Real-time query</div>
+      <div class="rh-pill"><div class="dot" style="background:var(--ink3)"></div>Cork County</div>
+    </div>
+  </div>
+
+  <div class="score-strip">
+    <div class="score-row">
+      <div class="s-box"><div class="si">🌊</div><div class="sl">Flood</div><div class="sv sv-g">LOW</div><div class="sb sb-g">Zone A</div></div>
+      <div class="s-box"><div class="si">🚔</div><div class="sl">Crime</div><div class="sv sv-g">67</div><div class="sb sb-g">Below avg</div></div>
+      <div class="s-box"><div class="si">🏗️</div><div class="sl">Planning</div><div class="sv sv-a">3</div><div class="sb sb-a">Nearby</div></div>
+      <div class="s-box"><div class="si">💧</div><div class="sl">Water</div><div class="sv sv-g">Clear</div><div class="sb sb-g">No alerts</div></div>
+      <div class="s-box"><div class="si">🏫</div><div class="sl">Schools</div><div class="sv sv-g">4</div><div class="sb sb-g">In catchment</div></div>
+      <div class="s-box"><div class="si">📊</div><div class="sl">Price</div><div class="sv sv-b">€342K</div><div class="sb sb-g">+12% '22</div></div>
+    </div>
+  </div>
+
+  <div class="r-body">
+    <div class="r-main">
+      <!-- Flood -->
+      <div class="r-sec">
+        <div class="rs-head"><div class="rs-ico" style="background:rgba(58,107,154,0.1)">🌊</div><div class="rs-title">Flood Risk Assessment</div><div class="rs-badge sb-g">LOW RISK</div></div>
+        <div class="rs-body">
+          <div class="d-grid">
+            <div class="d-item"><div class="di-l">OPW Zone</div><div class="di-v" style="color:#2D7A4A">Zone A — Low</div><div class="di-s">&lt;0.1% annual probability</div></div>
+            <div class="d-item"><div class="di-l">Flood type</div><div class="di-v">Fluvial (River)</div><div class="di-s">Lee River, 1.8km away</div></div>
+            <div class="d-item"><div class="di-l">Last flood event</div><div class="di-v">None recorded</div><div class="di-s">Since OPW records 1995</div></div>
+            <div class="d-item"><div class="di-l">Climate risk 2050</div><div class="di-v" style="color:var(--gold)">Low-Medium</div><div class="di-s">CFRAM projections</div></div>
+          </div>
+          <div class="rbar"><div class="rbar-row"><span>Risk level</span><span style="color:#2D7A4A;font-weight:700">15 / 100</span></div><div class="rbar-track"><div class="rbar-fill" style="width:15%;background:#2D7A4A"></div></div></div>
+          <div class="r-note">This property is 1.8km from the nearest OPW flood zone boundary. Standard home insurance should be available without flood surcharge. Confirm with your broker before exchanging contracts.</div>
+        </div>
+      </div>
+
+      <!-- Planning -->
+      <div class="r-sec">
+        <div class="rs-head"><div class="rs-ico" style="background:rgba(196,147,58,0.1)">🏗️</div><div class="rs-title">Planning Applications (500m)</div><div class="rs-badge sb-a">3 FOUND</div></div>
+        <div class="rs-body">
+          <div class="plan-list">
+            <div class="plan-item"><div class="ps ps-g">GRANTED</div><div><div class="pi-desc">12 residential apartments, Model Farm Road — 3-storey with underground parking</div><div class="pi-meta">Ref: 24/12345 · 280m NW · Cork City Council · Nov 2024</div></div></div>
+            <div class="plan-item"><div class="ps ps-a">PENDING</div><div><div class="pi-desc">Single-storey rear extension, Supervalu Bishopstown retail premises</div><div class="pi-meta">Ref: 24/56789 · 420m SE · Under review</div></div></div>
+            <div class="plan-item"><div class="ps ps-r">REFUSED</div><div><div class="pi-desc">Change of use: residential to short-term letting — refused Cork City Council</div><div class="pi-meta">Ref: 23/98765 · 180m E · Refused Mar 2023</div></div></div>
+          </div>
+          <div class="r-note" style="background:rgba(196,147,58,0.06);border:1px solid rgba(196,147,58,0.15);border-radius:10px;padding:12px;margin-top:12px"><strong style="color:var(--gold)">Watch:</strong> The granted 12-apartment development 280m northwest may affect street character and traffic. Verify construction timeline with Cork City Council before committing.</div>
+        </div>
+      </div>
+
+      <!-- Price History -->
+      <div class="r-sec">
+        <div class="rs-head"><div class="rs-ico" style="background:rgba(58,107,154,0.1)">📊</div><div class="rs-title">Price History — T12 / Bishopstown</div><div class="rs-badge sb-g">PPR DATA</div></div>
+        <div class="rs-body">
+          <div class="d-grid" style="margin-bottom:18px">
+            <div class="d-item"><div class="di-l">Median 2024</div><div class="di-v" style="color:var(--sky)">€342,000</div><div class="di-s">47 sales in T12 postcode</div></div>
+            <div class="d-item"><div class="di-l">Growth since 2019</div><div class="di-v" style="color:#2D7A4A">+42%</div><div class="di-s">€241K → €342K</div></div>
+            <div class="d-item"><div class="di-l">vs Cork City median</div><div class="di-v">−8%</div><div class="di-s">Below city avg €372K</div></div>
+            <div class="d-item"><div class="di-l">Sales volume</div><div class="di-v">47 sales</div><div class="di-s">Active, liquid market</div></div>
+          </div>
+          <div class="ch-wrap"><canvas id="price-chart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Crime -->
+      <div class="r-sec">
+        <div class="rs-head"><div class="rs-ico" style="background:rgba(196,82,42,0.1)">🚔</div><div class="rs-title">Crime & Safety Index</div><div class="rs-badge sb-g">BELOW AVERAGE</div></div>
+        <div class="rs-body">
+          <div class="d-grid">
+            <div class="d-item"><div class="di-l">Safety score</div><div class="di-v" style="color:#2D7A4A">67 / 100</div><div class="di-s">100 = safest district</div></div>
+            <div class="d-item"><div class="di-l">Garda district</div><div class="di-v">Bishopstown</div><div class="di-s">Cork City Division</div></div>
+            <div class="d-item"><div class="di-l">vs Cork City avg</div><div class="di-v" style="color:#2D7A4A">−18%</div><div class="di-s">Below city average</div></div>
+            <div class="d-item"><div class="di-l">Trend</div><div class="di-v">Stable</div><div class="di-s">No change 2022–24</div></div>
+          </div>
+          <div class="rbar"><div class="rbar-row"><span>Safety score</span><span style="color:#2D7A4A;font-weight:700">67 / 100 — Good</span></div><div class="rbar-track"><div class="rbar-fill" style="width:67%;background:#2D7A4A"></div></div></div>
+          <div class="r-note">Source: An Garda Síochána Annual Report 2023. Most prevalent offence type: public order (low severity). Rates are per 1,000 population.</div>
+        </div>
+      </div>
+
+      <!-- Schools -->
+      <div class="r-sec">
+        <div class="rs-head"><div class="rs-ico" style="background:rgba(45,122,74,0.1)">🏫</div><div class="rs-title">School Catchments</div><div class="rs-badge sb-g">4 SCHOOLS</div></div>
+        <div class="rs-body">
+          <div class="sch-list">
+            <div class="sch-item"><div class="sch-d">0.4 km</div><div><div class="sch-name">Scoil Chríost Rí</div><div class="sch-type">Primary · Mixed</div></div><div class="sch-r sr-g">A</div></div>
+            <div class="sch-item"><div class="sch-d">0.8 km</div><div><div class="sch-name">Gaelscoil Uí Riordáin</div><div class="sch-type">Primary · Gaelscoil</div></div><div class="sch-r sr-g">A</div></div>
+            <div class="sch-item"><div class="sch-d">1.1 km</div><div><div class="sch-name">Coláiste an Spioraid Naoimh</div><div class="sch-type">Secondary · Boys</div></div><div class="sch-r sr-a">B+</div></div>
+            <div class="sch-item"><div class="sch-d">1.4 km</div><div><div class="sch-name">Bishopstown Community School</div><div class="sch-type">Secondary · Mixed</div></div><div class="sch-r sr-g">A−</div></div>
+          </div>
+          <div class="r-note" style="margin-top:14px">Catchment areas from Dept. of Education records. Contact schools directly to confirm enrolment availability.</div>
+        </div>
+      </div>
+    </div><!-- r-main -->
+
+    <!-- Aside -->
+    <div class="r-aside">
+      <div class="a-card">
+        <div class="ac-t">Overall score</div>
+        <div class="score-ring">
+          <div class="sr-wrap">
+            <svg viewBox="0 0 86 86" style="width:86px;height:86px">
+              <circle cx="43" cy="43" r="36" fill="none" stroke="var(--cream3)" stroke-width="7"/>
+              <circle cx="43" cy="43" r="36" fill="none" stroke="var(--forest)" stroke-width="7" stroke-dasharray="226" stroke-dashoffset="45" stroke-linecap="round" transform="rotate(-90 43 43)"/>
+            </svg>
+            <div class="sr-num">80</div>
+          </div>
+          <div class="sr-lbl">Good — low risk</div>
+        </div>
+        <div class="sb-rows">
+          <div class="sbr"><span class="sbr-k">Flood risk</span><span class="sbr-v" style="color:#2D7A4A">✓ Low</span></div>
+          <div class="sbr"><span class="sbr-k">Planning</span><span class="sbr-v" style="color:var(--gold)">! Watch</span></div>
+          <div class="sbr"><span class="sbr-k">Crime</span><span class="sbr-v" style="color:#2D7A4A">✓ Good</span></div>
+          <div class="sbr"><span class="sbr-k">Schools</span><span class="sbr-v" style="color:#2D7A4A">✓ Excellent</span></div>
+          <div class="sbr"><span class="sbr-k">Price trend</span><span class="sbr-v" style="color:#2D7A4A">✓ Strong</span></div>
+          <div class="sbr"><span class="sbr-k">Water</span><span class="sbr-v" style="color:#2D7A4A">✓ Clear</span></div>
+        </div>
+      </div>
+      <div class="watch-card">
+        <div class="wc-h">⚠ Key watch item</div>
+        <div class="wc-b">12-unit apartment development <strong>280m northwest</strong> has planning granted. Verify construction timeline before exchanging contracts.</div>
+      </div>
+      <div class="up-card">
+        <div class="uc-t">Compare properties</div>
+        <div class="uc-s">Run reports on multiple properties and compare them side by side — flood, crime, schools, price. €29/mo, unlimited.</div>
+        <a href="index.html#compare" class="uc-btn">See comparison tool →</a>
+      </div>
+      <div class="a-card" style="text-align:center">
+        <div style="font-size:11px;color:var(--ink3);font-weight:600;margin-bottom:8px">Report generated</div>
+        <div style="font-family:var(--font-h);font-size:14px;color:var(--ink2);font-weight:700" id="aside-date"></div>
+        <div style="font-size:11px;color:var(--ink3);margin-top:4px">Valid for 30 days</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring')
+let mx=0,my=0,rx=0,ry=0
+if(window.matchMedia('(hover:hover)').matches){
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'})
+  ;(function l(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(l)})()
+}
+function fill(c){document.getElementById('ec-f').value=c}
+document.getElementById('ec-f').addEventListener('input',function(){this.value=this.value.toUpperCase().replace(/[^A-Z0-9 ]/g,'')})
+document.getElementById('ec-f').addEventListener('keydown',e=>{if(e.key==='Enter')startLoad()})
+
+const ecData={
+  'T12 XY34':{addr:'Model Farm Road, Bishopstown, Cork',short:'Bishopstown'},
+  'P43 AB12':{addr:'Togher Road, Togher, Cork',short:'Togher'},
+  'T23 CD56':{addr:'Magazine Road, Cork City',short:'Cork City'},
+}
+let activeEC='T12 XY34'
+
+function startLoad(){
+  const v=(document.getElementById('ec-f').value.trim().toUpperCase()||'T12 XY34')
+  activeEC=v
+  document.getElementById('s-i').style.display='none'
+  const sl=document.getElementById('s-l')
+  sl.style.display='flex'
+  document.getElementById('l-ec').textContent=v
+  const steps=document.querySelectorAll('.l-step')
+  const bar=document.getElementById('l-bar')
+  steps.forEach(s=>{s.className='l-step';s.querySelector('.ls-ico').textContent='○'})
+  bar.style.transition='none';bar.style.width='0%'
+  let i=0
+  const subtitles=['Geocoding coordinates...','Checking flood zones...','Searching planning applications...','Querying Garda statistics...','Pulling price history...','Mapping school catchments...','Checking Irish Water...','Building your report...']
+  function next(){
+    if(i>0){steps[i-1].className='l-step done';steps[i-1].querySelector('.ls-ico').textContent='✓'}
+    if(i<steps.length){
+      steps[i].className='l-step active';steps[i].querySelector('.ls-ico').textContent='↻'
+      document.getElementById('l-sub').textContent=subtitles[i]
+      requestAnimationFrame(()=>{bar.style.transition='width .5s ease';bar.style.width=((i+1)/steps.length*100)+'%'})
+      i++;setTimeout(next,560+Math.random()*240)
+    }else{setTimeout(showReport,350)}
+  }
+  setTimeout(next,200)
+}
+
+function showReport(){
+  document.getElementById('s-l').style.display='none'
+  document.getElementById('s-r').style.display='block'
+  const d=ecData[activeEC]||ecData['T12 XY34']
+  const now=new Date().toLocaleDateString('en-IE',{day:'numeric',month:'long',year:'numeric'})
+  document.getElementById('rn-ec').textContent=activeEC
+  document.getElementById('rn-addr').textContent=d.short
+  document.getElementById('rh-ec').textContent=activeEC
+  document.getElementById('rh-addr').textContent=d.addr
+  document.getElementById('rh-date').textContent=now
+  document.getElementById('aside-date').textContent=now
+  setTimeout(initChart,400)
+}
+
+function resetApp(){
+  document.getElementById('s-r').style.display='none'
+  document.getElementById('s-i').style.display='flex'
+  document.getElementById('ec-f').value=''
+}
+
+let chartDone=false
+function initChart(){
+  if(chartDone)return;chartDone=true
+  const ctx=document.getElementById('price-chart')
+  if(!ctx)return
+  new Chart(ctx,{
+    type:'line',
+    data:{
+      labels:['2010','2012','2014','2016','2018','2019','2020','2021','2022','2023','2024'],
+      datasets:[{
+        label:'Median €K',
+        data:[180,165,172,195,218,241,248,272,305,326,342],
+        borderColor:'#3A6B9A',
+        backgroundColor:'rgba(58,107,154,0.07)',
+        borderWidth:2,pointRadius:3,
+        pointBackgroundColor:'#3A6B9A',
+        tension:.4,fill:true
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`€${c.raw}K`}}},
+      scales:{
+        x:{ticks:{color:'#7A7A7A',font:{size:10,family:'Plus Jakarta Sans'}},grid:{color:'rgba(0,0,0,0.04)'},border:{display:false}},
+        y:{ticks:{color:'#7A7A7A',font:{size:10,family:'Plus Jakarta Sans'},callback:v=>'€'+v+'K'},grid:{color:'rgba(0,0,0,0.04)'},border:{display:false}}
+      }
+    }
+  })
+}
+</script>
+</body>
+</html>
